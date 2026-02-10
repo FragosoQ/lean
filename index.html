@@ -1,461 +1,599 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  CheckCircle2, 
-  Circle, 
-  ShoppingCart, 
-  Utensils, 
-  Calendar, 
-  TrendingUp, 
-  ChefHat, 
-  Info,
-  Clock,
-  Euro,
-  CheckSquare,
-  Square,
-  Package,
-  Activity,
-  Zap,
-  Flame,
-  Dna,
-  History,
-  Trash2,
-  Archive,
-  Dumbbell,
-  Plus,
-  Minus,
-  ChevronDown,
-  ChevronUp
-} from 'lucide-react';
-
-const App = () => {
-  const [activeTab, setActiveTab] = useState('meals');
-  const [selectedDay, setSelectedDay] = useState('2ª');
-  const [completedMeals, setCompletedMeals] = useState({});
-  const [checkedItems, setCheckedItems] = useState({});
-  const [expandedHistory, setExpandedHistory] = useState(null);
-  
-  const [dailyExercise, setDailyExercise] = useState({
-    '2ª': { name: '', cals: 0 },
-    '3ª': { name: '', cals: 0 },
-    '4ª': { name: '', cals: 0 },
-    '5ª': { name: '', cals: 0 },
-    '6ª': { name: '', cals: 0 }
-  });
-  
-  const [history, setHistory] = useState([
-    { 
-      id: 1, 
-      date: "03 Fev - 09 Fev", 
-      completion: 85, 
-      avgCals: 1240, 
-      avgProtein: 98, 
-      totalBurned: 1200,
-      exercises: ["Corrida 5km", "Treino de Pernas", "Natação"]
-    },
-    { 
-      id: 2, 
-      date: "27 Jan - 02 Fev", 
-      completion: 92, 
-      avgCals: 1310, 
-      avgProtein: 105, 
-      totalBurned: 1550,
-      exercises: ["Full Body", "Caminhada", "HIIT", "Treino de Costas"]
-    }
-  ]);
-
-  const daysList = ['2ª', '3ª', '4ª', '5ª', '6ª'];
-
-  // Dados das Refeições Atualizados
-  const mealData = {
-    '2ª': { 
-      items: [
-        { id: 'pq', title: "Pequeno-Almoço", content: "2 ovos + 1 banana", cals: 245, protein: 14, icon: <Clock className="w-5 h-5 text-orange-500" /> }, 
-        { id: 'al', title: "Almoço", content: "Frango 150g + arroz 75g (cru)", subtitle: "Legumes: Brócolos", cals: 465, protein: 42, icon: <Activity className="w-5 h-5 text-blue-500" /> }, 
-        { id: 'la', title: "Lanche", content: "Skyr (170g)", cals: 110, protein: 18, icon: <Zap className="w-5 h-5 text-purple-500" /> }, 
-        { id: 'ja', title: "Jantar", content: "Sopa + iogurte natural + 1 scoop whey", subtitle: "Dose: 350 ml", cals: 320, protein: 28, icon: <ChefHat className="w-5 h-5 text-emerald-500" /> }
-      ] 
-    },
-    '3ª': { 
-      items: [
-        { id: 'pq', title: "Pequeno-Almoço", content: "2 ovos + 1 banana", cals: 245, protein: 14, icon: <Clock className="w-5 h-5 text-orange-500" /> }, 
-        { id: 'al', title: "Almoço", content: "Frango 150g + grão 100g", subtitle: "Legumes: Cenoura baby", cals: 365, protein: 40, icon: <Activity className="w-5 h-5 text-blue-500" /> }, 
-        { id: 'la', title: "Lanche", content: "Atum (1 lata)", cals: 85, protein: 22, icon: <Zap className="w-5 h-5 text-purple-500" /> }, 
-        { id: 'ja', title: "Jantar", content: "Sopa + omelete (2 ovos + 1 clara)", subtitle: "Dose: 350 ml", cals: 315, protein: 18, icon: <ChefHat className="w-5 h-5 text-emerald-500" /> }
-      ] 
-    },
-    '4ª': { 
-      items: [
-        { id: 'pq', title: "Pequeno-Almoço", content: "2 ovos + 1 banana", cals: 245, protein: 14, icon: <Clock className="w-5 h-5 text-orange-500" /> }, 
-        { id: 'al', title: "Almoço", content: "Salmão 150g + arroz 60g (cru)", subtitle: "Legumes: Espinafres em folha", cals: 535, protein: 35, icon: <Activity className="w-5 h-5 text-blue-500" /> }, 
-        { id: 'la', title: "Lanche", content: "Iogurte proteico", cals: 95, protein: 20, icon: <Zap className="w-5 h-5 text-purple-500" /> }, 
-        { id: 'ja', title: "Jantar", content: "Sopa + skyr", subtitle: "Dose: 350 ml", cals: 260, protein: 20, icon: <ChefHat className="w-5 h-5 text-emerald-500" /> }
-      ] 
-    },
-    '5ª': { 
-      items: [
-        { id: 'pq', title: "Pequeno-Almoço", content: "2 ovos + 1 banana", cals: 245, protein: 14, icon: <Clock className="w-5 h-5 text-orange-500" /> }, 
-        { id: 'al', title: "Almoço", content: "Frango 150g + batata 250g", subtitle: "Legumes: Mistura de Brócolos, Couve-flor e cenoura", cals: 410, protein: 38, icon: <Activity className="w-5 h-5 text-blue-500" /> }, 
-        { id: 'la', title: "Lanche", content: "Skyr (170g)", cals: 110, protein: 18, icon: <Zap className="w-5 h-5 text-purple-500" /> }, 
-        { id: 'ja', title: "Jantar", content: "Sopa + iogurte natural + 1 scoop whey", subtitle: "Dose: 350 ml", cals: 320, protein: 28, icon: <ChefHat className="w-5 h-5 text-emerald-500" /> }
-      ] 
-    },
-    '6ª': { 
-      items: [
-        { id: 'pq', title: "Pequeno-Almoço", content: "2 ovos + 1 banana", cals: 245, protein: 14, icon: <Clock className="w-5 h-5 text-orange-500" /> }, 
-        { id: 'al', title: "Almoço", content: "Salmão 150g + grão 100g", subtitle: "Legumes: Couve de Bruxelas", cals: 495, protein: 36, icon: <Activity className="w-5 h-5 text-blue-500" /> }, 
-        { id: 'la', title: "Lanche", content: "Iogurte natural + 1/2 lata atum", cals: 105, protein: 15, icon: <Zap className="w-5 h-5 text-purple-500" /> }, 
-        { id: 'ja', title: "Jantar", content: "Sopa + atum ou skyr", subtitle: "Dose: 350 ml", cals: 255, protein: 25, icon: <ChefHat className="w-5 h-5 text-emerald-500" /> }
-      ] 
-    }
-  };
-
-  // Lista de Compras Atualizada
-  const shoppingList = [
-    { id: 1, cat: 'Proteína', prod: 'Ovos (12 un)', qty: '12 un', price: 3.09, status: 'Comprar', day: '2ª' },
-    { id: 2, cat: 'Proteína', prod: 'Peru (bifes/perna)', qty: '300 g', price: 2.10, status: 'Comprar', day: '2ª' },
-    { id: 3, cat: 'Proteína', prod: 'Frango (peito)', qty: '600 g', price: 1.98, status: 'Comprar', day: '2ª' },
-    { id: 4, cat: 'Proteína', prod: 'Salmão (lombos/postas)', qty: '400 g', price: 4.00, status: 'Comprar', day: '2ª' },
-    { id: 5, cat: 'Proteína', prod: 'Atum ao natural', qty: '3 latas', price: 2.67, status: 'Comprar', day: '2ª' },
-    { id: 6, cat: 'Proteína', prod: 'Skyr natural (150 g)', qty: '3 un', price: 1.95, status: 'Comprar', day: '2ª' },
-    { id: 7, cat: 'Proteína', prod: 'Iogurte proteico', qty: '1 un', price: 0.85, status: 'Comprar', day: '2ª' },
-    { id: 8, cat: 'Proteína', prod: 'Iogurte natural', qty: '2 un', price: 0.35, status: 'Comprar', day: '2ª' },
-    { id: 9, cat: 'Proteína', prod: 'Whey', qty: '90 g', price: 3.20, status: 'Stock', day: '—' },
-    { id: 10, cat: 'Hidratos', prod: 'Arroz', qty: '500 g', price: 0.58, status: 'Comprar', day: '2ª' },
-    { id: 11, cat: 'Hidratos', prod: 'Batata', qty: '1 kg', price: 2.99, status: 'Comprar', day: '2ª' },
-    { id: 12, cat: 'Hidratos', prod: 'Banana', qty: '5 un', price: 1.30, status: 'Comprar', day: '2ª' },
-    { id: 13, cat: 'Hidratos', prod: 'Grão', qty: '400 g', price: 0.90, status: 'Comprar', day: '2ª' },
-    { id: 14, cat: 'Legumes', prod: 'Brócolos', qty: '400 g', price: 2.34, status: 'Comprar', day: '2ª' },
-    { id: 15, cat: 'Legumes', prod: 'Cenoura baby', qty: '750gr', price: 1.39, status: 'Comprar', day: '2ª' },
-    { id: 17, cat: 'Legumes', prod: 'Espinafres em folha', qty: '750 g', price: 1.29, status: 'Comprar', day: '4ª' },
-    { id: 18, cat: 'Legumes', prod: 'Mistura Brócolos, Couve-flor e Cenoura', qty: '1Kg', price: 1.89, status: 'Comprar', day: '2ª' },
-    { id: 24, cat: 'Legumes', prod: 'Couve de Bruxelas', qty: '750gr', price: 1.29, status: 'Comprar', day: '2ª' },
-    { id: 20, cat: 'Legumes', prod: 'Cebola', qty: '~300 g', price: 0.56, status: 'Comprar', day: '2ª' },
-    { id: 21, cat: 'Sopa', prod: 'Agrião (800gr)', qty: '1 un', price: 2.49, status: 'Comprar', day: '2ª' },
-    { id: 22, cat: 'Sopa', prod: 'Creme de Legumes (800gr)', qty: '1 un', price: 2.49, status: 'Comprar', day: '4ª' },
-    { id: 23, cat: 'Sopa', prod: 'Creme de Cenoura (800gr)', qty: '1 un', price: 2.49, status: 'Comprar', day: '5ª' },
-  ];
-
-  const toggleMeal = (day, mealId) => {
-    const key = `${day}-${mealId}`;
-    setCompletedMeals(prev => ({ ...prev, [key]: !prev[key] }));
-  };
-
-  const toggleShoppingItem = (id) => {
-    setCheckedItems(prev => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  const handleExerciseChange = (day, field, value) => {
-    setDailyExercise(prev => ({
-      ...prev,
-      [day]: { ...prev[day], [field]: field === 'cals' ? parseInt(value) || 0 : value }
-    }));
-  };
-
-  const calculateProgress = () => {
-    const totalPossible = daysList.length * 4; 
-    const completed = Object.values(completedMeals).filter(Boolean).length;
-    return Math.round((completed / totalPossible) * 100);
-  };
-
-  const dayCals = mealData[selectedDay].items.reduce((acc, curr) => acc + curr.cals, 0);
-  const dayProtein = mealData[selectedDay].items.reduce((acc, curr) => acc + curr.protein, 0);
-  const dayBurned = dailyExercise[selectedDay].cals;
-  
-  const consumedCals = mealData[selectedDay].items.reduce((acc, curr) => {
-      return completedMeals[`${selectedDay}-${curr.id}`] ? acc + curr.cals : acc;
-  }, 0);
-  
-  const consumedProtein = mealData[selectedDay].items.reduce((acc, curr) => {
-      return completedMeals[`${selectedDay}-${curr.id}`] ? acc + curr.protein : acc;
-  }, 0);
-
-  const archiveWeek = () => {
-    let totalCals = 0;
-    let totalProt = 0;
-    let exercisesLog = [];
-    let burnedSum = 0;
-
-    daysList.forEach(day => {
-        mealData[day].items.forEach(item => {
-            if (completedMeals[`${day}-${item.id}`]) {
-                totalCals += item.cals;
-                totalProt += item.protein;
-            }
-        });
-        if (dailyExercise[day].cals > 0) {
-            burnedSum += dailyExercise[day].cals;
-            exercisesLog.push(`${day}: ${dailyExercise[day].name || 'Treino'} (${dailyExercise[day].cals} kcal)`);
-        }
-    });
-
-    const newEntry = {
-      id: Date.now(),
-      date: `Semana ${new Date().toLocaleDateString('pt-PT')}`,
-      completion: calculateProgress(),
-      avgCals: Math.round(totalCals / 5),
-      avgProtein: Math.round(totalProt / 5),
-      totalBurned: burnedSum,
-      exercises: exercisesLog
-    };
-
-    setHistory([newEntry, ...history]);
-    setCompletedMeals({});
-    setCheckedItems({});
-    setDailyExercise({ '2ª': { name: '', cals: 0 }, '3ª': { name: '', cals: 0 }, '4ª': { name: '', cals: 0 }, '5ª': { name: '', cals: 0 }, '6ª': { name: '', cals: 0 } });
-    setActiveTab('history');
-  };
-
-  const totalPrice = shoppingList.reduce((acc, curr) => acc + curr.price, 0);
-  const totalBought = shoppingList.filter(item => checkedItems[item.id]).length;
-
-  return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 pb-24 font-sans selection:bg-emerald-100 selection:text-emerald-900">
-      <div className="fixed top-[-5%] left-[-5%] w-[50%] h-[50%] bg-emerald-100/40 blur-[100px] rounded-full pointer-events-none"></div>
-      <div className="fixed bottom-[-5%] right-[-5%] w-[50%] h-[50%] bg-blue-100/40 blur-[100px] rounded-full pointer-events-none"></div>
-
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/70 backdrop-blur-md border-b border-slate-200 p-5">
-        <div className="max-w-4xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-emerald-500 rounded-xl shadow-lg shadow-emerald-200">
-              <Zap className="w-5 h-5 text-white fill-white" />
-            </div>
-            <div>
-              <h1 className="text-xl font-black tracking-tight text-slate-900 uppercase italic">
-                Nutri<span className="text-emerald-600">Core</span>
-              </h1>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Protocolo Metabólico</p>
-            </div>
-          </div>
-          <div className="text-right flex items-center gap-3 sm:gap-6">
-            <div className="flex flex-col items-end">
-               <div className="text-[9px] uppercase tracking-wider text-slate-400 font-bold mb-0.5">Balanço Hoje</div>
-               <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1 text-[11px] font-black text-orange-600 bg-orange-50 px-2 py-0.5 rounded-lg border border-orange-100 shadow-sm">
-                    <Flame className="w-3 h-3" /> {dayCals - dayBurned} kcal (Net)
-                  </div>
-                  <div className="flex items-center gap-1 text-[11px] font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100 shadow-sm">
-                    <Dna className="w-3 h-3" /> {dayProtein}g P
-                  </div>
-               </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-4xl mx-auto p-4 relative z-10">
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriCore - Suporte Metabólico</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap');
         
-        {/* Dashboard */}
-        {activeTab !== 'history' && (
-          <section className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-8">
-              <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-5 shadow-xl shadow-slate-200/50 border border-white relative overflow-hidden group">
-                  <div className="flex items-center justify-between mb-3">
-                      <h2 className="text-[10px] font-black flex items-center gap-2 text-slate-400 uppercase tracking-widest">
-                          <Activity className="w-4 h-4 text-emerald-500" /> Progresso
-                      </h2>
-                      <span className="text-emerald-600 font-black text-lg">{calculateProgress()}%</span>
-                  </div>
-                  <div className="w-full bg-slate-100 rounded-full h-2.5 p-1 border border-slate-200/50">
-                      <div className="bg-gradient-to-r from-emerald-400 to-emerald-600 h-full rounded-full transition-all duration-1000 ease-out" style={{ width: `${calculateProgress()}%` }} />
-                  </div>
-                  {calculateProgress() > 0 && (
-                    <button onClick={archiveWeek} className="mt-3 w-full py-2 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-tighter flex items-center justify-center gap-2 hover:bg-emerald-600 transition-colors shadow-lg">
-                      <Archive className="w-3 h-3" /> Arquivar Semana
-                    </button>
-                  )}
-              </div>
-              <MetricBox icon={<Plus className="w-4 h-4 text-orange-500" />} label="Consumido" value={`${consumedCals} kcal`} progress={(consumedCals/dayCals)*100} />
-              <MetricBox icon={<Minus className="w-4 h-4 text-blue-500" />} label="Queimado" value={`${dayBurned} kcal`} progress={(dayBurned/1000)*100} color="bg-blue-500" />
-              <MetricBox icon={<Dna className="w-4 h-4 text-emerald-500" />} label="Proteína" value={`${consumedProtein}g / ${dayProtein}g`} progress={(consumedProtein/dayProtein)*100} color="bg-emerald-500" />
-          </section>
-        )}
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
 
-        {/* Tab Navigation */}
-        <nav className="flex bg-slate-200/50 backdrop-blur-md rounded-2xl p-1.5 mb-8 border border-white shadow-sm sticky top-24 z-40">
-          <TabNav active={activeTab === 'meals'} onClick={() => setActiveTab('meals')} icon={<Utensils className="w-4 h-4" />} label="Plano" />
-          <TabNav active={activeTab === 'shopping'} onClick={() => setActiveTab('shopping')} icon={<ShoppingCart className="w-4 h-4" />} label="Compras" />
-          <TabNav active={activeTab === 'history'} onClick={() => setActiveTab('history')} icon={<History className="w-4 h-4" />} label="Registo" />
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .transition-all {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .neon-shadow-emerald {
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.2);
+        }
+    </style>
+</head>
+<body class="selection:bg-emerald-100 selection:text-emerald-900 pb-24 min-h-screen">
+    <!-- Efeitos de fundo -->
+    <div class="fixed top-[-5%] left-[-5%] w-[50%] h-[50%] bg-emerald-100/40 blur-[100px] rounded-full pointer-events-none -z-10"></div>
+    <div class="fixed bottom-[-5%] right-[-5%] w-[50%] h-[50%] bg-blue-100/40 blur-[100px] rounded-full pointer-events-none -z-10"></div>
+
+    <!-- Cabeçalho -->
+    <header class="sticky top-0 z-50 bg-white/70 backdrop-blur-md border-b border-slate-200 p-5">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="p-2.5 bg-emerald-500 rounded-xl shadow-lg shadow-emerald-200">
+                    <i data-lucide="zap" class="w-5 h-5 text-white fill-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-black tracking-tight text-slate-900 uppercase italic">
+                        Nutri<span class="text-emerald-600">Core</span>
+                    </h1>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Protocolo Metabólico</p>
+                </div>
+            </div>
+            <div class="text-right flex items-center gap-3 sm:gap-6">
+                <div class="flex flex-col items-end">
+                    <div class="text-[9px] uppercase tracking-wider text-slate-400 font-bold mb-0.5">Balanço Hoje</div>
+                    <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-1 text-[11px] font-black text-orange-600 bg-orange-50 px-2 py-0.5 rounded-lg border border-orange-100 shadow-sm">
+                            <i data-lucide="flame" class="w-3 h-3"></i> <span id="header-net-cals">0</span> kcal (Net)
+                        </div>
+                        <div class="flex items-center gap-1 text-[11px] font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100 shadow-sm">
+                            <i data-lucide="dna" class="w-3 h-3"></i> <span id="header-protein">0</span>g P
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto p-4 relative z-10">
+        <!-- Dashboard -->
+        <section id="dashboard" class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-8">
+            <div class="glass-card rounded-3xl p-5 shadow-xl shadow-slate-200/50 border border-white relative overflow-hidden group">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-[10px] font-black flex items-center gap-2 text-slate-400 uppercase tracking-widest">
+                        <i data-lucide="activity" class="w-4 h-4 text-emerald-500"></i> Progresso
+                    </h2>
+                    <span id="weekly-progress-text" class="text-emerald-600 font-black text-lg">0%</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-2.5 p-1 border border-slate-200/50">
+                    <div id="weekly-progress-bar" class="bg-gradient-to-r from-emerald-400 to-emerald-600 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div>
+                </div>
+                <button onclick="archiveWeek()" id="btn-archive" class="mt-3 w-full py-2 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-tighter flex items-center justify-center gap-2 hover:bg-emerald-600 transition-colors shadow-lg hidden">
+                    <i data-lucide="archive" class="w-3 h-3"></i> Arquivar Semana
+                </button>
+            </div>
+            <div class="glass-card rounded-3xl p-5 shadow-xl shadow-slate-200/50 border border-white">
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="text-[10px] font-black flex items-center gap-2 text-slate-400 uppercase tracking-widest"><i data-lucide="plus" class="w-4 h-4 text-orange-500"></i> Consumido</h2>
+                    <span id="consumed-cals-text" class="text-orange-600 font-mono font-bold text-sm">0 kcal</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-2">
+                    <div id="consumed-cals-bar" class="bg-orange-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="glass-card rounded-3xl p-5 shadow-xl shadow-slate-200/50 border border-white">
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="text-[10px] font-black flex items-center gap-2 text-slate-400 uppercase tracking-widest"><i data-lucide="minus" class="w-4 h-4 text-blue-500"></i> Queimado</h2>
+                    <span id="burned-cals-text" class="text-blue-600 font-mono font-bold text-sm">0 kcal</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-2">
+                    <div id="burned-cals-bar" class="bg-blue-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="glass-card rounded-3xl p-5 shadow-xl shadow-slate-200/50 border border-white">
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="text-[10px] font-black flex items-center gap-2 text-slate-400 uppercase tracking-widest"><i data-lucide="dna" class="w-4 h-4 text-emerald-500"></i> Proteína</h2>
+                    <span id="protein-text" class="text-emerald-600 font-mono font-bold text-sm">0g</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-2">
+                    <div id="protein-bar" class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navegação por Abas -->
+        <nav class="flex bg-slate-200/50 backdrop-blur-md rounded-2xl p-1.5 mb-8 border border-white shadow-sm sticky top-24 z-40">
+            <button onclick="switchTab('meals')" id="tab-meals" class="tab-btn flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all bg-white text-emerald-600 shadow-md">
+                <i data-lucide="utensils" class="w-4 h-4"></i> Plano
+            </button>
+            <button onclick="switchTab('shopping')" id="tab-shopping" class="tab-btn flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all text-slate-500 hover:text-slate-800">
+                <i data-lucide="shopping-cart" class="w-4 h-4"></i> Compras
+            </button>
+            <button onclick="switchTab('history')" id="tab-history" class="tab-btn flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all text-slate-500 hover:text-slate-800">
+                <i data-lucide="history" class="w-4 h-4"></i> Registo
+            </button>
         </nav>
 
-        {activeTab === 'meals' && (
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="flex gap-2 overflow-x-auto pb-4 mb-6 no-scrollbar">
-              {daysList.map(day => (
-                <button key={day} onClick={() => setSelectedDay(day)} className={`px-8 py-3 rounded-2xl font-black text-sm whitespace-nowrap transition-all ${selectedDay === day ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-200 scale-105' : 'bg-white text-slate-400 border border-slate-200 hover:border-emerald-300'}`}>
-                  {day}
-                </button>
-              ))}
+        <!-- Conteúdo das Abas -->
+        <div id="view-meals" class="tab-view space-y-6">
+            <div id="day-selector" class="flex gap-2 overflow-x-auto pb-4 no-scrollbar">
+                <!-- Injetado via JS -->
             </div>
-
-            <div className="grid grid-cols-1 gap-4">
-              {/* Exercise Card */}
-              <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-[2rem] p-6 shadow-xl shadow-blue-200/50 text-white relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform"><Dumbbell className="w-24 h-24" /></div>
-                <div className="flex flex-col sm:flex-row gap-4 relative z-10">
-                  <div className="flex-1">
-                    <h4 className="text-[10px] font-black uppercase tracking-widest text-blue-100 mb-2">Atividade Física (Hoje)</h4>
-                    <input type="text" placeholder="Nome do exercício..." className="bg-white/10 border border-white/20 rounded-xl px-4 py-2 w-full text-white placeholder:text-blue-200 font-bold focus:outline-none focus:bg-white/20 transition-all" value={dailyExercise[selectedDay].name} onChange={(e) => handleExerciseChange(selectedDay, 'name', e.target.value)} />
-                  </div>
-                  <div className="w-full sm:w-32">
-                    <h4 className="text-[10px] font-black uppercase tracking-widest text-blue-100 mb-2">Gasto (kcal)</h4>
-                    <input type="number" placeholder="0" className="bg-white/10 border border-white/20 rounded-xl px-4 py-2 w-full text-white placeholder:text-blue-200 font-bold focus:outline-none focus:bg-white/20 transition-all text-center" value={dailyExercise[selectedDay].cals || ''} onChange={(e) => handleExerciseChange(selectedDay, 'cals', e.target.value)} />
-                  </div>
-                </div>
-              </div>
-
-              {mealData[selectedDay].items.map((meal) => (
-                <MealCard key={meal.id} title={meal.title} content={meal.content} subtitle={meal.subtitle} cals={meal.cals} protein={meal.protein} icon={meal.icon} completed={completedMeals[`${selectedDay}-${meal.id}`]} onToggle={() => toggleMeal(selectedDay, meal.id)} />
-              ))}
+            <div id="exercise-card">
+                <!-- Injetado via JS -->
             </div>
-          </div>
-        )}
-
-        {activeTab === 'shopping' && (
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-6">
-            <div className="bg-emerald-600 rounded-3xl p-6 text-white shadow-xl shadow-emerald-200 relative overflow-hidden italic">
-               <h3 className="font-black text-lg flex items-center gap-2"><ShoppingCart className="w-6 h-6" /> Checklist Semanal</h3>
-               <p className="text-emerald-100 text-xs font-bold uppercase tracking-wider mt-1">{totalBought} de {shoppingList.length} itens no carrinho</p>
+            <div id="meal-cards-container" class="grid grid-cols-1 gap-4">
+                <!-- Injetado via JS -->
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {['Proteína', 'Hidratos', 'Legumes', 'Sopa'].map(category => (
-                <div key={category} className="bg-white rounded-3xl p-6 shadow-lg shadow-slate-200/50 border border-slate-100">
-                  <h3 className="font-black text-slate-800 mb-5 text-xs uppercase tracking-widest border-l-4 border-emerald-500 pl-3">{category}</h3>
-                  <ul className="space-y-3">
-                    {shoppingList.filter(item => item.cat === category).map((item) => {
-                      const isEx = item.status !== 'Comprar' || item.day !== '2ª';
-                      return (
-                        <li key={item.id} onClick={() => toggleShoppingItem(item.id)} className={`flex justify-between items-center cursor-pointer p-3 rounded-2xl border transition-all ${checkedItems[item.id] ? 'bg-slate-50 border-transparent opacity-40' : isEx ? 'bg-amber-50/50 border-amber-100' : 'bg-white border-slate-100 shadow-sm'}`}>
-                          <div className="flex items-center gap-3">
-                            {checkedItems[item.id] ? <CheckSquare className="w-5 h-5 text-emerald-500" /> : <Square className="w-5 h-5 text-slate-200" />}
-                            <div className="flex flex-col text-sm font-bold"><span>{item.prod}</span><span className="text-[10px] text-slate-400 font-normal">{item.qty} • {item.day}</span></div>
-                          </div>
-                          <span className="text-xs font-black">{item.price.toFixed(2)}€</span>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        </div>
 
-        {activeTab === 'history' && (
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-4">
-            <h2 className="text-lg font-black text-slate-800 flex items-center gap-2 px-2">
-              <History className="w-5 h-5 text-emerald-600" /> Registo Histórico
+        <div id="view-shopping" class="tab-view hidden space-y-6">
+            <div class="bg-emerald-600 rounded-3xl p-6 text-white shadow-xl shadow-emerald-200 relative overflow-hidden italic">
+                <h3 class="font-black text-lg flex items-center gap-2"><i data-lucide="shopping-cart" class="w-6 h-6"></i> Checklist Semanal</h3>
+                <p id="shopping-summary" class="text-emerald-100 text-xs font-bold uppercase tracking-wider mt-1">0 de 0 itens no carrinho</p>
+            </div>
+            <div id="shopping-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Injetado via JS -->
+            </div>
+        </div>
+
+        <div id="view-history" class="tab-view hidden space-y-4">
+            <h2 class="text-lg font-black text-slate-800 flex items-center gap-2 px-2">
+                <i data-lucide="history" class="w-5 h-5 text-emerald-600"></i> Registo Histórico
             </h2>
-            {history.map((entry) => (
-              <div key={entry.id} className="bg-white rounded-[2rem] p-6 shadow-lg shadow-slate-200/40 border border-white transition-all overflow-hidden">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="flex-1">
-                    <h3 className="text-sm font-black text-slate-800 uppercase tracking-tight">{entry.date}</h3>
-                    <div className="flex flex-wrap items-center gap-2 mt-3">
-                      <HistoryBadge icon={<Flame className="w-3 h-3" />} label={`~${entry.avgCals} kcal`} color="text-orange-600 bg-orange-50" />
-                      <HistoryBadge icon={<Dna className="w-3 h-3" />} label={`~${entry.avgProtein}g P`} color="text-blue-600 bg-blue-50" />
-                      <HistoryBadge icon={<Dumbbell className="w-3 h-3" />} label={`${entry.totalBurned} kcal queimadas`} color="text-blue-800 bg-blue-100" />
+            <div id="history-container" class="space-y-4">
+                <!-- Injetado via JS -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Navegação Mobile -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t border-slate-200 p-4 pb-8 md:hidden shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
+        <div class="flex justify-around items-center max-w-lg mx-auto">
+            <button onclick="switchTab('meals')" class="mobile-tab-btn flex flex-col items-center gap-1.5 transition-all text-emerald-600 scale-110" data-tab="meals">
+                <div class="p-2.5 rounded-2xl bg-emerald-500 text-white shadow-lg shadow-emerald-200"><i data-lucide="calendar" class="w-5 h-5"></i></div>
+                <span class="text-[9px] font-black uppercase tracking-widest">Plano</span>
+            </button>
+            <button onclick="switchTab('shopping')" class="mobile-tab-btn flex flex-col items-center gap-1.5 transition-all text-slate-400" data-tab="shopping">
+                <div class="p-2.5 rounded-2xl relative"><i data-lucide="shopping-cart" class="w-5 h-5"></i><span id="shopping-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center font-black border-2 border-white hidden">0</span></div>
+                <span class="text-[9px] font-black uppercase tracking-widest">Compras</span>
+            </button>
+            <button onclick="switchTab('history')" class="mobile-tab-btn flex flex-col items-center gap-1.5 transition-all text-slate-400" data-tab="history">
+                <div class="p-2.5 rounded-2xl"><i data-lucide="history" class="w-5 h-5"></i></div>
+                <span class="text-[9px] font-black uppercase tracking-widest">Registo</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- ESTADO DA APLICAÇÃO ---
+        let activeTab = 'meals';
+        let selectedDay = '2ª';
+        let completedMeals = {}; // Formato: {'2ª-pq': true}
+        let checkedItems = {};   // Formato: {1: true}
+        let dailyExercise = {
+            '2ª': { name: '', cals: 0 },
+            '3ª': { name: '', cals: 0 },
+            '4ª': { name: '', cals: 0 },
+            '5ª': { name: '', cals: 0 },
+            '6ª': { name: '', cals: 0 }
+        };
+        let history = [
+            { 
+                id: 1, 
+                date: "03 Fev - 09 Fev", 
+                completion: 85, 
+                avgCals: 1240, 
+                avgProtein: 98, 
+                totalBurned: 1200,
+                exercises: ["Corrida 5km", "Treino de Pernas", "Natação"]
+            }
+        ];
+        let expandedHistoryId = null;
+
+        // --- DADOS FIXOS ---
+        const daysList = ['2ª', '3ª', '4ª', '5ª', '6ª'];
+        
+        const mealData = {
+            '2ª': [
+                { id: 'pq', title: "Pequeno-Almoço", content: "2 ovos + 1 banana", cals: 245, protein: 14, icon: 'clock', color: 'text-orange-500' },
+                { id: 'al', title: "Almoço", content: "Frango 150g + arroz 75g (cru)", subtitle: "Legumes: Brócolos", cals: 465, protein: 42, icon: 'activity', color: 'text-blue-500' },
+                { id: 'la', title: "Lanche", content: "Skyr (170g)", cals: 110, protein: 18, icon: 'zap', color: 'text-purple-500' },
+                { id: 'ja', title: "Jantar", content: "Sopa + iogurte natural + 1 scoop whey", subtitle: "Dose: 350 ml", cals: 320, protein: 28, icon: 'chef-hat', color: 'text-emerald-500' }
+            ],
+            '3ª': [
+                { id: 'pq', title: "Pequeno-Almoço", content: "2 ovos + 1 banana", cals: 245, protein: 14, icon: 'clock', color: 'text-orange-500' },
+                { id: 'al', title: "Almoço", content: "Frango 150g + grão 100g", subtitle: "Legumes: Cenoura baby", cals: 365, protein: 40, icon: 'activity', color: 'text-blue-500' },
+                { id: 'la', title: "Lanche", content: "Atum (1 lata)", cals: 85, protein: 22, icon: 'zap', color: 'text-purple-500' },
+                { id: 'ja', title: "Jantar", content: "Sopa + omelete (2 ovos + 1 clara)", subtitle: "Dose: 350 ml", cals: 315, protein: 18, icon: 'chef-hat', color: 'text-emerald-500' }
+            ],
+            '4ª': [
+                { id: 'pq', title: "Pequeno-Almoço", content: "2 ovos + 1 banana", cals: 245, protein: 14, icon: 'clock', color: 'text-orange-500' },
+                { id: 'al', title: "Almoço", content: "Salmão 150g + arroz 60g (cru)", subtitle: "Legumes: Espinafres em folha", cals: 535, protein: 35, icon: 'activity', color: 'text-blue-500' },
+                { id: 'la', title: "Lanche", content: "Iogurte proteico", cals: 95, protein: 20, icon: 'zap', color: 'text-purple-500' },
+                { id: 'ja', title: "Jantar", content: "Sopa + skyr", subtitle: "Dose: 350 ml", cals: 260, protein: 20, icon: 'chef-hat', color: 'text-emerald-500' }
+            ],
+            '5ª': [
+                { id: 'pq', title: "Pequeno-Almoço", content: "2 ovos + 1 banana", cals: 245, protein: 14, icon: 'clock', color: 'text-orange-500' },
+                { id: 'al', title: "Almoço", content: "Frango 150g + batata 250g", subtitle: "Legumes: Mistura de Brócolos, Couve-flor e cenoura", cals: 410, protein: 38, icon: 'activity', color: 'text-blue-500' },
+                { id: 'la', title: "Lanche", content: "Skyr (170g)", cals: 110, protein: 18, icon: 'zap', color: 'text-purple-500' },
+                { id: 'ja', title: "Jantar", content: "Sopa + iogurte natural + 1 scoop whey", subtitle: "Dose: 350 ml", cals: 320, protein: 28, icon: 'chef-hat', color: 'text-emerald-500' }
+            ],
+            '6ª': [
+                { id: 'pq', title: "Pequeno-Almoço", content: "2 ovos + 1 banana", cals: 245, protein: 14, icon: 'clock', color: 'text-orange-500' },
+                { id: 'al', title: "Almoço", content: "Salmão 150g + grão 100g", subtitle: "Legumes: Couve de Bruxelas", cals: 495, protein: 36, icon: 'activity', color: 'text-blue-500' },
+                { id: 'la', title: "Lanche", content: "Iogurte natural + 1/2 lata atum", cals: 105, protein: 15, icon: 'zap', color: 'text-purple-500' },
+                { id: 'ja', title: "Jantar", content: "Sopa + atum ou skyr", subtitle: "Dose: 350 ml", cals: 255, protein: 25, icon: 'chef-hat', color: 'text-emerald-500' }
+            ]
+        };
+
+        const shoppingList = [
+            { id: 1, cat: 'Proteína', prod: 'Ovos (12 un)', qty: '12 un', price: 3.09, status: 'Comprar', day: '2ª' },
+            { id: 2, cat: 'Proteína', prod: 'Peru (bifes/perna)', qty: '300 g', price: 2.10, status: 'Comprar', day: '2ª' },
+            { id: 3, cat: 'Proteína', prod: 'Frango (peito)', qty: '600 g', price: 1.98, status: 'Comprar', day: '2ª' },
+            { id: 4, cat: 'Proteína', prod: 'Salmão (lombos/postas)', qty: '400 g', price: 4.00, status: 'Comprar', day: '2ª' },
+            { id: 5, cat: 'Proteína', prod: 'Atum ao natural', qty: '3 latas', price: 2.67, status: 'Comprar', day: '2ª' },
+            { id: 6, cat: 'Proteína', prod: 'Skyr natural (150 g)', qty: '3 un', price: 1.95, status: 'Comprar', day: '2ª' },
+            { id: 7, cat: 'Proteína', prod: 'Iogurte proteico', qty: '1 un', price: 0.85, status: 'Comprar', day: '2ª' },
+            { id: 8, cat: 'Proteína', prod: 'Iogurte natural', qty: '2 un', price: 0.35, status: 'Comprar', day: '2ª' },
+            { id: 9, cat: 'Proteína', prod: 'Whey', qty: '90 g', price: 3.20, status: 'Stock', day: '—' },
+            { id: 10, cat: 'Hidratos', prod: 'Arroz', qty: '500 g', price: 0.58, status: 'Comprar', day: '2ª' },
+            { id: 11, cat: 'Hidratos', prod: 'Batata', qty: '1 kg', price: 2.99, status: 'Comprar', day: '2ª' },
+            { id: 12, cat: 'Hidratos', prod: 'Banana', qty: '5 un', price: 1.30, status: 'Comprar', day: '2ª' },
+            { id: 13, cat: 'Hidratos', prod: 'Grão', qty: '400 g', price: 0.90, status: 'Comprar', day: '2ª' },
+            { id: 14, cat: 'Legumes', prod: 'Brócolos', qty: '400 g', price: 2.34, status: 'Comprar', day: '2ª' },
+            { id: 15, cat: 'Legumes', prod: 'Cenoura baby', qty: '750gr', price: 1.39, status: 'Comprar', day: '2ª' },
+            { id: 17, cat: 'Legumes', prod: 'Espinafres em folha', qty: '750 g', price: 1.29, status: 'Comprar', day: '4ª' },
+            { id: 18, cat: 'Legumes', prod: 'Mistura Brócolos, Couve-flor e Cenoura', qty: '1Kg', price: 1.89, status: 'Comprar', day: '2ª' },
+            { id: 24, cat: 'Legumes', prod: 'Couve de Bruxelas', qty: '750gr', price: 1.29, status: 'Comprar', day: '2ª' },
+            { id: 20, cat: 'Legumes', prod: 'Cebola', qty: '~300 g', price: 0.56, status: 'Comprar', day: '2ª' },
+            { id: 21, cat: 'Sopa', prod: 'Agrião (800gr)', qty: '1 un', price: 2.49, status: 'Comprar', day: '2ª' },
+            { id: 22, cat: 'Sopa', prod: 'Creme de Legumes (800gr)', qty: '1 un', price: 2.49, status: 'Comprar', day: '4ª' },
+            { id: 23, cat: 'Sopa', prod: 'Creme de Cenoura (800gr)', qty: '1 un', price: 2.49, status: 'Comprar', day: '5ª' },
+        ];
+
+        // --- FUNÇÕES DE INTERFACE ---
+
+        function switchTab(tabId) {
+            activeTab = tabId;
+            document.querySelectorAll('.tab-view').forEach(view => view.classList.add('hidden'));
+            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+            
+            // Atualizar botões
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-white', 'text-emerald-600', 'shadow-md');
+                btn.classList.add('text-slate-500');
+            });
+            document.getElementById(`tab-${tabId}`).classList.add('bg-white', 'text-emerald-600', 'shadow-md');
+            document.getElementById(`tab-${tabId}`).classList.remove('text-slate-500');
+
+            // Nav Mobile
+            document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
+                btn.classList.remove('text-emerald-600', 'scale-110');
+                btn.classList.add('text-slate-400');
+                const inner = btn.querySelector('div');
+                inner.classList.remove('bg-emerald-500', 'text-white', 'shadow-lg', 'shadow-emerald-200');
+            });
+            const activeMobile = document.querySelector(`.mobile-tab-btn[data-tab="${tabId}"]`);
+            activeMobile.classList.add('text-emerald-600', 'scale-110');
+            activeMobile.querySelector('div').classList.add('bg-emerald-500', 'text-white', 'shadow-lg', 'shadow-emerald-200');
+
+            render();
+        }
+
+        function updateSelectedDay(day) {
+            selectedDay = day;
+            render();
+        }
+
+        function toggleMeal(mealId) {
+            const key = `${selectedDay}-${mealId}`;
+            completedMeals[key] = !completedMeals[key];
+            render();
+        }
+
+        function toggleShopping(id) {
+            checkedItems[id] = !checkedItems[id];
+            render();
+        }
+
+        function handleExerciseInput(field, value) {
+            dailyExercise[selectedDay][field] = field === 'cals' ? (parseInt(value) || 0) : value;
+            updateDashboard();
+        }
+
+        function archiveWeek() {
+            let totalCals = 0;
+            let totalProt = 0;
+            let exercisesLog = [];
+            let burnedSum = 0;
+
+            daysList.forEach(day => {
+                mealData[day].forEach(item => {
+                    if (completedMeals[`${day}-${item.id}`]) {
+                        totalCals += item.cals;
+                        totalProt += item.protein;
+                    }
+                });
+                if (dailyExercise[day].cals > 0) {
+                    burnedSum += dailyExercise[day].cals;
+                    exercisesLog.push(`${day}: ${dailyExercise[day].name || 'Treino'} (${dailyExercise[day].cals} kcal)`);
+                }
+            });
+
+            const newEntry = {
+                id: Date.now(),
+                date: `Semana ${new Date().toLocaleDateString('pt-PT')}`,
+                completion: calculateProgressValue(),
+                avgCals: Math.round(totalCals / 5),
+                avgProtein: Math.round(totalProt / 5),
+                totalBurned: burnedSum,
+                exercises: exercisesLog
+            };
+
+            history.unshift(newEntry);
+            completedMeals = {};
+            checkedItems = {};
+            dailyExercise = { '2ª': { name: '', cals: 0 }, '3ª': { name: '', cals: 0 }, '4ª': { name: '', cals: 0 }, '5ª': { name: '', cals: 0 }, '6ª': { name: '', cals: 0 } };
+            switchTab('history');
+        }
+
+        function deleteHistory(id) {
+            history = history.filter(h => h.id !== id);
+            render();
+        }
+
+        function toggleHistoryDetails(id) {
+            expandedHistoryId = expandedHistoryId === id ? null : id;
+            render();
+        }
+
+        // --- CÁLCULOS ---
+
+        function calculateProgressValue() {
+            const totalPossible = daysList.length * 4;
+            const completed = Object.values(completedMeals).filter(Boolean).length;
+            return Math.round((completed / totalPossible) * 100);
+        }
+
+        // --- RENDERIZAÇÃO ---
+
+        function updateDashboard() {
+            const progress = calculateProgressValue();
+            document.getElementById('weekly-progress-text').innerText = `${progress}%`;
+            document.getElementById('weekly-progress-bar').style.width = `${progress}%`;
+            
+            if (progress > 0) {
+                document.getElementById('btn-archive').classList.remove('hidden');
+            } else {
+                document.getElementById('btn-archive').classList.add('hidden');
+            }
+
+            const currentMeals = mealData[selectedDay];
+            const targetCals = currentMeals.reduce((acc, curr) => acc + curr.cals, 0);
+            const targetProt = currentMeals.reduce((acc, curr) => acc + curr.protein, 0);
+            const burned = dailyExercise[selectedDay].cals;
+
+            const consumed = currentMeals.reduce((acc, curr) => {
+                return completedMeals[`${selectedDay}-${curr.id}`] ? acc + curr.cals : acc;
+            }, 0);
+
+            const consumedProt = currentMeals.reduce((acc, curr) => {
+                return completedMeals[`${selectedDay}-${curr.id}`] ? acc + curr.protein : acc;
+            }, 0);
+
+            document.getElementById('header-net-cals').innerText = targetCals - burned;
+            document.getElementById('header-protein').innerText = targetProt;
+
+            document.getElementById('consumed-cals-text').innerText = `${consumed} kcal`;
+            document.getElementById('consumed-cals-bar').style.width = `${Math.min((consumed/targetCals)*100, 100)}%`;
+
+            document.getElementById('burned-cals-text').innerText = `${burned} kcal`;
+            document.getElementById('burned-cals-bar').style.width = `${Math.min((burned/1000)*100, 100)}%`;
+
+            document.getElementById('protein-text').innerText = `${consumedProt}g / ${targetProt}g`;
+            document.getElementById('protein-bar').style.width = `${Math.min((consumedProt/targetProt)*100, 100)}%`;
+        }
+
+        function renderDaySelector() {
+            const container = document.getElementById('day-selector');
+            container.innerHTML = daysList.map(day => `
+                <button onclick="updateSelectedDay('${day}')" class="px-8 py-3 rounded-2xl font-black text-sm whitespace-nowrap transition-all ${selectedDay === day ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-200 scale-105' : 'bg-white text-slate-400 border border-slate-200 hover:border-emerald-300'}">
+                    ${day}
+                </button>
+            `).join('');
+        }
+
+        function renderExerciseCard() {
+            const container = document.getElementById('exercise-card');
+            container.innerHTML = `
+                <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-[2rem] p-6 shadow-xl shadow-blue-200/50 text-white relative overflow-hidden group mb-4">
+                    <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform"><i data-lucide="dumbbell" class="w-24 h-24"></i></div>
+                    <div class="flex flex-col sm:flex-row gap-4 relative z-10">
+                        <div class="flex-1">
+                            <h4 class="text-[10px] font-black uppercase tracking-widest text-blue-100 mb-2">Atividade Física (Hoje)</h4>
+                            <input type="text" placeholder="Nome do exercício..." class="bg-white/10 border border-white/20 rounded-xl px-4 py-2 w-full text-white placeholder:text-blue-200 font-bold focus:outline-none focus:bg-white/20 transition-all" value="${dailyExercise[selectedDay].name}" oninput="handleExerciseInput('name', this.value)">
+                        </div>
+                        <div class="w-full sm:w-32">
+                            <h4 class="text-[10px] font-black uppercase tracking-widest text-blue-100 mb-2">Gasto (kcal)</h4>
+                            <input type="number" placeholder="0" class="bg-white/10 border border-white/20 rounded-xl px-4 py-2 w-full text-white placeholder:text-blue-200 font-bold focus:outline-none focus:bg-white/20 transition-all text-center" value="${dailyExercise[selectedDay].cals || ''}" oninput="handleExerciseInput('cals', this.value)">
+                        </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="text-right">
-                      <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Taxa Conclusão</div>
-                      <div className={`text-xl font-black ${entry.completion > 80 ? 'text-emerald-600' : 'text-amber-500'}`}>{entry.completion}%</div>
-                    </div>
-                    <button onClick={() => setExpandedHistory(expandedHistory === entry.id ? null : entry.id)} className="p-2 bg-slate-50 rounded-xl text-slate-400 hover:text-slate-900 transition-colors">
-                      {expandedHistory === entry.id ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-                    </button>
-                    <button onClick={() => setHistory(history.filter(h => h.id !== entry.id))} className="p-2 text-slate-300 hover:text-red-500 transition-all">
-                      <Trash2 className="w-5 h-5" />
-                    </button>
-                  </div>
                 </div>
-                
-                {expandedHistory === entry.id && (
-                  <div className="mt-6 pt-6 border-t border-slate-100 animate-in slide-in-from-top-2 duration-300">
-                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Atividades da Semana</h4>
-                    {entry.exercises && entry.exercises.length > 0 ? (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {entry.exercises.map((ex, idx) => (
-                          <div key={idx} className="flex items-center gap-2 p-2 bg-slate-50 rounded-xl border border-slate-100 text-xs font-bold text-slate-600 italic">
-                             <Dumbbell className="w-3 h-3 text-blue-500" /> {ex}
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-xs text-slate-300 italic">Nenhum exercício registado nesta semana.</p>
-                    )}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </main>
+            `;
+            lucide.createIcons();
+        }
 
-      {/* Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t border-slate-200 p-4 pb-8 md:hidden shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
-        <div className="flex justify-around items-center max-w-lg mx-auto">
-          <MobileTab active={activeTab === 'meals'} onClick={() => setActiveTab('meals')} icon={<Calendar className="w-5 h-5" />} label="Plano" />
-          <MobileTab active={activeTab === 'shopping'} onClick={() => setActiveTab('shopping')} icon={<ShoppingCart className="w-5 h-5" />} label="Compras" badge={shoppingList.length - totalBought} />
-          <MobileTab active={activeTab === 'history'} onClick={() => setActiveTab('history')} icon={<History className="w-5 h-5" />} label="Registo" />
-        </div>
-      </div>
-    </div>
-  );
-};
+        function renderMeals() {
+            const container = document.getElementById('meal-cards-container');
+            const meals = mealData[selectedDay];
+            
+            container.innerHTML = meals.map(meal => {
+                const isCompleted = completedMeals[`${selectedDay}-${meal.id}`];
+                return `
+                    <div onclick="toggleMeal('${meal.id}')" class="group bg-white rounded-[2rem] p-6 border transition-all cursor-pointer shadow-lg shadow-slate-200/40 active:scale-95 ${isCompleted ? 'border-transparent bg-slate-50' : 'border-white hover:border-emerald-200 shadow-sm'}">
+                        <div class="flex items-center gap-5">
+                            <div class="p-4 rounded-2xl transition-all ${isCompleted ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-50 text-slate-400 shadow-inner'}">
+                                <i data-lucide="${isCompleted ? 'check-circle-2' : meal.icon}" class="w-6 h-6"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center mb-1">
+                                    <h4 class="text-[10px] font-black uppercase tracking-widest ${isCompleted ? 'text-emerald-600/50' : 'text-slate-400'}">${meal.title}</h4>
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex items-center gap-1 bg-orange-50 px-2 py-0.5 rounded-full border border-orange-100 font-black text-[9px] text-orange-600"><i data-lucide="flame" class="w-3 h-3"></i> ${meal.cals} kcal</div>
+                                        <div class="flex items-center gap-1 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100 font-black text-[9px] text-blue-600"><i data-lucide="dna" class="w-3 h-3"></i> ${meal.protein}g P</div>
+                                    </div>
+                                </div>
+                                <p class="text-lg font-black tracking-tight leading-tight ${isCompleted ? 'text-slate-400 line-through italic' : 'text-slate-900'}">${meal.content}</p>
+                                ${meal.subtitle ? `<div class="text-xs mt-2 flex items-center gap-1.5 font-bold text-emerald-600/70"><i data-lucide="info" class="w-3 h-3"></i> ${meal.subtitle}</div>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
 
-const MetricBox = ({ icon, label, value, progress, color = "bg-orange-500" }) => (
-  <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-5 shadow-xl shadow-slate-200/50 border border-white">
-      <div className="flex items-center justify-between mb-2">
-          <h2 className="text-[10px] font-black flex items-center gap-2 text-slate-400 uppercase tracking-widest">{icon} {label}</h2>
-          <span className={`${color.replace('bg-', 'text-')} font-mono font-bold text-sm`}>{value}</span>
-      </div>
-      <div className="w-full bg-slate-100 rounded-full h-2">
-          <div className={`${color} h-full rounded-full transition-all duration-500`} style={{ width: `${Math.min(progress, 100)}%` }} />
-      </div>
-  </div>
-);
+        function renderShopping() {
+            const container = document.getElementById('shopping-container');
+            const categories = ['Proteína', 'Hidratos', 'Legumes', 'Sopa'];
+            
+            const totalItems = shoppingList.length;
+            const bought = shoppingList.filter(item => checkedItems[item.id]).length;
+            document.getElementById('shopping-summary').innerText = `${bought} de ${totalItems} itens no carrinho`;
+            
+            // Badge mobile
+            const badge = document.getElementById('shopping-badge');
+            if (totalItems - bought > 0) {
+                badge.innerText = totalItems - bought;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
 
-const TabNav = ({ active, onClick, icon, label }) => (
-  <button onClick={onClick} className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all ${active ? 'bg-white text-emerald-600 shadow-md scale-[1.02]' : 'text-slate-500 hover:text-slate-800'}`}>
-    {icon} {label}
-  </button>
-);
+            container.innerHTML = categories.map(cat => {
+                const items = shoppingList.filter(i => i.cat === cat);
+                const catBought = items.filter(i => checkedItems[i.id]).length;
+                return `
+                    <div class="bg-white rounded-3xl p-6 shadow-lg shadow-slate-200/50 border border-slate-100">
+                        <h3 class="font-black text-slate-800 mb-5 text-xs uppercase tracking-widest border-l-4 border-emerald-500 pl-3 flex justify-between">
+                            ${cat}
+                            <span class="text-[10px] text-slate-400 font-mono font-normal">${catBought}/${items.length}</span>
+                        </h3>
+                        <ul class="space-y-3">
+                            ${items.map(item => {
+                                const isEx = item.status !== 'Comprar' || item.day !== '2ª';
+                                const isCheck = checkedItems[item.id];
+                                return `
+                                    <li onclick="toggleShopping(${item.id})" class="flex justify-between items-center cursor-pointer p-3 rounded-2xl border transition-all ${isCheck ? 'bg-slate-50 border-transparent opacity-40' : isEx ? 'bg-amber-50/50 border-amber-100' : 'bg-white border-slate-100 shadow-sm'}">
+                                        <div class="flex items-center gap-3">
+                                            <i data-lucide="${isCheck ? 'check-square' : 'square'}" class="w-5 h-5 ${isCheck ? 'text-emerald-500' : 'text-slate-200'}"></i>
+                                            <div class="flex flex-col text-sm font-bold">
+                                                <span>${item.prod}</span>
+                                                <span class="text-[10px] text-slate-400 font-normal">${item.qty} • ${item.day}</span>
+                                            </div>
+                                        </div>
+                                        <span class="text-xs font-black">${item.price.toFixed(2)}€</span>
+                                    </li>
+                                `;
+                            }).join('')}
+                        </ul>
+                    </div>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
 
-const MobileTab = ({ active, onClick, icon, label, badge }) => (
-  <button onClick={onClick} className={`flex flex-col items-center gap-1.5 transition-all ${active ? 'text-emerald-600 scale-110' : 'text-slate-400'}`}>
-    <div className={`p-2.5 rounded-2xl transition-all relative ${active ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-200' : ''}`}>
-      {icon}
-      {badge > 0 && !active && <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center font-black border-2 border-white">{badge}</span>}
-    </div>
-    <span className="text-[9px] font-black uppercase tracking-widest">{label}</span>
-  </button>
-);
+        function renderHistory() {
+            const container = document.getElementById('history-container');
+            if (history.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white rounded-[2rem] p-12 text-center border border-slate-100">
+                        <i data-lucide="archive" class="w-12 h-12 text-slate-200 mx-auto mb-4"></i>
+                        <p class="text-slate-400 font-bold uppercase tracking-widest text-xs">Ainda não tens semanas arquivadas</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = history.map(entry => `
+                    <div class="bg-white rounded-[2rem] p-6 shadow-lg shadow-slate-200/40 border border-white transition-all overflow-hidden">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="flex-1">
+                                <h3 class="text-sm font-black text-slate-800 uppercase tracking-tight">${entry.date}</h3>
+                                <div class="flex flex-wrap items-center gap-2 mt-3">
+                                    <div class="flex items-center gap-1 text-[10px] font-bold text-orange-600 bg-orange-50 px-2 py-1 rounded-lg"><i data-lucide="flame" class="w-3 h-3"></i> ~${entry.avgCals} kcal/dia</div>
+                                    <div class="flex items-center gap-1 text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-lg"><i data-lucide="dna" class="w-3 h-3"></i> ~${entry.avgProtein}g P/dia</div>
+                                    <div class="flex items-center gap-1 text-[10px] font-bold text-blue-800 bg-blue-100 px-2 py-1 rounded-lg"><i data-lucide="dumbbell" class="w-3 h-3"></i> ${entry.totalBurned} kcal queimadas</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="text-right">
+                                    <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Taxa Conclusão</div>
+                                    <div class="text-xl font-black ${entry.completion > 80 ? 'text-emerald-600' : 'text-amber-500'}">${entry.completion}%</div>
+                                </div>
+                                <button onclick="toggleHistoryDetails(${entry.id})" class="p-2 bg-slate-50 rounded-xl text-slate-400 hover:text-slate-900 transition-colors">
+                                    <i data-lucide="${expandedHistoryId === entry.id ? 'chevron-up' : 'chevron-down'}" class="w-5 h-5"></i>
+                                </button>
+                                <button onclick="deleteHistory(${entry.id})" class="p-2 text-slate-300 hover:text-red-500 transition-all">
+                                    <i data-lucide="trash-2" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        ${expandedHistoryId === entry.id ? `
+                            <div class="mt-6 pt-6 border-t border-slate-100 animate-in slide-in-from-top-2 duration-300">
+                                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Atividades da Semana</h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    ${entry.exercises.length > 0 ? entry.exercises.map(ex => `
+                                        <div class="flex items-center gap-2 p-2 bg-slate-50 rounded-xl border border-slate-100 text-xs font-bold text-slate-600 italic">
+                                            <i data-lucide="dumbbell" class="w-3 h-3 text-blue-500"></i> ${ex}
+                                        </div>
+                                    `).join('') : '<p class="text-xs text-slate-300 italic">Sem registos.</p>'}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('');
+            }
+            lucide.createIcons();
+        }
 
-const HistoryBadge = ({ icon, label, color }) => (
-  <div className={`flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg ${color}`}>{icon} {label}</div>
-);
+        function render() {
+            updateDashboard();
+            if (activeTab === 'meals') {
+                renderDaySelector();
+                renderExerciseCard();
+                renderMeals();
+            } else if (activeTab === 'shopping') {
+                renderShopping();
+            } else if (activeTab === 'history') {
+                renderHistory();
+            }
+        }
 
-const MealCard = ({ title, content, subtitle, cals, protein, icon, completed, onToggle }) => (
-  <div onClick={onToggle} className={`group bg-white rounded-[2rem] p-6 border transition-all cursor-pointer shadow-lg shadow-slate-200/40 active:scale-95 ${completed ? 'border-transparent bg-slate-50' : 'border-white hover:border-emerald-200 shadow-sm'}`}>
-    <div className="flex items-center gap-5">
-      <div className={`p-4 rounded-2xl transition-all ${completed ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-50 text-slate-400 shadow-inner'}`}>
-        {completed ? <CheckCircle2 className="w-6 h-6" /> : icon}
-      </div>
-      <div className="flex-1">
-        <div className="flex justify-between items-center mb-1">
-          <h4 className={`text-[10px] font-black uppercase tracking-widest ${completed ? 'text-emerald-600/50' : 'text-slate-400'}`}>{title}</h4>
-          <div className="flex items-center gap-2">
-             <div className="flex items-center gap-1 bg-orange-50 px-2 py-0.5 rounded-full border border-orange-100 font-black text-[9px] text-orange-600"><Flame className="w-3 h-3" /> {cals} kcal</div>
-             <div className="flex items-center gap-1 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100 font-black text-[9px] text-blue-600"><Dna className="w-3 h-3" /> {protein}g P</div>
-          </div>
-        </div>
-        <p className={`text-lg font-black tracking-tight leading-tight ${completed ? 'text-slate-400 line-through italic' : 'text-slate-900'}`}>{content}</p>
-        {subtitle && <div className="text-xs mt-2 flex items-center gap-1.5 font-bold text-emerald-600/70"><Info className="w-3 h-3" /> {subtitle}</div>}
-      </div>
-    </div>
-  </div>
-);
-
-export default App;
+        // --- INICIALIZAÇÃO ---
+        window.onload = () => {
+            render();
+            lucide.createIcons();
+        };
+    </script>
+</body>
+</html>
