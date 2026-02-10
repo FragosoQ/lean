@@ -14,7 +14,7 @@
             background-color: #f8fafc;
             -webkit-tap-highlight-color: transparent;
             line-height: 1.6;
-            font-size: 28px; /* Aumentado em 10px (Base anterior 18px + 10px) */
+            font-size: 38px; /* Aumentado em mais 10px (anterior era 28px) */
         }
 
         .glass-card {
@@ -35,7 +35,7 @@
         }
 
         input {
-            font-size: 28px !important; /* Acompanha o aumento da fonte */
+            font-size: 38px !important; /* Acompanha o aumento da fonte base */
         }
 
         .transition-all {
@@ -47,7 +47,7 @@
         }
 
         button, .clickable {
-            min-height: 70px; /* Ajustado para o novo tamanho de fonte */
+            min-height: 90px; /* Ajustado para o novo tamanho de fonte de 38px */
         }
     </style>
 </head>
@@ -61,21 +61,21 @@
         <div class="max-w-4xl mx-auto flex flex-col gap-4">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-4">
-                    <div class="p-4 bg-emerald-500 rounded-3xl shadow-xl shadow-emerald-200">
-                        <i data-lucide="zap" class="w-8 h-8 text-white fill-white"></i>
+                    <div class="p-5 bg-emerald-500 rounded-3xl shadow-xl shadow-emerald-200">
+                        <i data-lucide="zap" class="w-10 h-10 text-white fill-white"></i>
                     </div>
                     <div>
-                        <h1 class="text-4xl font-black tracking-tighter text-slate-900 uppercase italic leading-none">
+                        <h1 class="text-5xl font-black tracking-tighter text-slate-900 uppercase italic leading-none">
                             Nutri<span class="text-emerald-600">Core</span>
                         </h1>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
-                    <div class="flex items-center gap-2 text-xl font-black text-orange-600 bg-orange-50 px-4 py-2 rounded-2xl border border-orange-100">
-                        <i data-lucide="flame" class="w-6 h-6"></i> <span id="header-net-cals">0</span>
+                    <div class="flex items-center gap-2 text-2xl font-black text-orange-600 bg-orange-50 px-5 py-3 rounded-2xl border border-orange-100">
+                        <i data-lucide="flame" class="w-8 h-8"></i> <span id="header-net-cals">0</span>
                     </div>
-                    <div class="flex items-center gap-2 text-xl font-black text-blue-600 bg-blue-50 px-4 py-2 rounded-2xl border border-blue-100">
-                        <i data-lucide="dna" class="w-6 h-6"></i> <span id="header-protein">0</span>g
+                    <div class="flex items-center gap-2 text-2xl font-black text-blue-600 bg-blue-50 px-5 py-3 rounded-2xl border border-blue-100">
+                        <i data-lucide="dna" class="w-8 h-8"></i> <span id="header-protein">0</span>g
                     </div>
                 </div>
             </div>
@@ -84,49 +84,49 @@
 
     <main class="max-w-4xl mx-auto px-0 sm:px-6 py-6 relative z-10">
         <!-- Dashboard Expandido -->
-        <section id="dashboard" class="grid grid-cols-1 gap-0 sm:gap-6 mb-12">
-            <div class="glass-card rounded-none sm:rounded-[3rem] p-8 sm:p-10 shadow-sm flex flex-col justify-between min-h-[220px]">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-lg font-black text-slate-400 uppercase tracking-widest flex items-center gap-4">
-                        <i data-lucide="activity" class="w-8 h-8 text-emerald-500"></i> Sucesso Semanal
+        <section id="dashboard" class="grid grid-cols-1 gap-0 sm:gap-8 mb-12">
+            <div class="glass-card rounded-none sm:rounded-[3rem] p-10 sm:p-12 shadow-sm flex flex-col justify-between min-h-[260px]">
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="text-2xl font-black text-slate-400 uppercase tracking-widest flex items-center gap-5">
+                        <i data-lucide="activity" class="w-10 h-10 text-emerald-500"></i> Sucesso Semanal
                     </h2>
-                    <span id="weekly-progress-text" class="text-emerald-600 font-black text-4xl">0%</span>
+                    <span id="weekly-progress-text" class="text-emerald-600 font-black text-5xl">0%</span>
                 </div>
-                <div class="w-full bg-slate-100 rounded-full h-6 overflow-hidden mb-8">
+                <div class="w-full bg-slate-100 rounded-full h-8 overflow-hidden mb-10">
                     <div id="weekly-progress-bar" class="bg-emerald-500 h-full rounded-full transition-all duration-700" style="width: 0%"></div>
                 </div>
-                <button onclick="archiveWeek()" id="btn-archive" class="w-full py-5 bg-slate-900 text-white rounded-3xl text-lg font-black uppercase tracking-widest hidden transition-all active:scale-95 shadow-2xl">
+                <button onclick="archiveWeek()" id="btn-archive" class="w-full py-6 bg-slate-900 text-white rounded-[2rem] text-xl font-black uppercase tracking-widest hidden transition-all active:scale-95 shadow-2xl">
                     Arquivar Semana
                 </button>
             </div>
 
-            <div class="space-y-0 sm:space-y-6">
-                <div class="glass-card rounded-none sm:rounded-[3rem] p-8 shadow-sm">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-lg font-black text-slate-400 uppercase tracking-widest flex items-center gap-4"><i data-lucide="plus" class="w-8 h-8 text-orange-500"></i> Dieta</h2>
-                        <span id="consumed-cals-text" class="text-orange-600 font-mono font-bold text-2xl">0 kcal</span>
+            <div class="space-y-0 sm:space-y-8">
+                <div class="glass-card rounded-none sm:rounded-[3rem] p-10 shadow-sm">
+                    <div class="flex items-center justify-between mb-8">
+                        <h2 class="text-2xl font-black text-slate-400 uppercase tracking-widest flex items-center gap-5"><i data-lucide="plus" class="w-10 h-10 text-orange-500"></i> Dieta</h2>
+                        <span id="consumed-cals-text" class="text-orange-600 font-mono font-bold text-3xl">0 kcal</span>
                     </div>
-                    <div class="w-full bg-slate-100 rounded-full h-4">
+                    <div class="w-full bg-slate-100 rounded-full h-5">
                         <div id="consumed-cals-bar" class="bg-orange-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
                     </div>
                 </div>
 
-                <div class="glass-card rounded-none sm:rounded-[3rem] p-8 shadow-sm">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-lg font-black text-slate-400 uppercase tracking-widest flex items-center gap-4"><i data-lucide="minus" class="w-8 h-8 text-blue-500"></i> Gasto</h2>
-                        <span id="burned-cals-text" class="text-blue-600 font-mono font-bold text-2xl">0 kcal</span>
+                <div class="glass-card rounded-none sm:rounded-[3rem] p-10 shadow-sm">
+                    <div class="flex items-center justify-between mb-8">
+                        <h2 class="text-2xl font-black text-slate-400 uppercase tracking-widest flex items-center gap-5"><i data-lucide="minus" class="w-10 h-10 text-blue-500"></i> Gasto</h2>
+                        <span id="burned-cals-text" class="text-blue-600 font-mono font-bold text-3xl">0 kcal</span>
                     </div>
-                    <div class="w-full bg-slate-100 rounded-full h-4">
+                    <div class="w-full bg-slate-100 rounded-full h-5">
                         <div id="burned-cals-bar" class="bg-blue-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
                     </div>
                 </div>
 
-                <div class="glass-card rounded-none sm:rounded-[3rem] p-8 shadow-sm">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-lg font-black text-slate-400 uppercase tracking-widest flex items-center gap-4"><i data-lucide="dna" class="w-8 h-8 text-emerald-500"></i> Proteína</h2>
-                        <span id="protein-text" class="text-emerald-600 font-mono font-bold text-2xl">0g</span>
+                <div class="glass-card rounded-none sm:rounded-[3rem] p-10 shadow-sm">
+                    <div class="flex items-center justify-between mb-8">
+                        <h2 class="text-2xl font-black text-slate-400 uppercase tracking-widest flex items-center gap-5"><i data-lucide="dna" class="w-10 h-10 text-emerald-500"></i> Proteína</h2>
+                        <span id="protein-text" class="text-emerald-600 font-mono font-bold text-3xl">0g</span>
                     </div>
-                    <div class="w-full bg-slate-100 rounded-full h-4">
+                    <div class="w-full bg-slate-100 rounded-full h-5">
                         <div id="protein-bar" class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
                     </div>
                 </div>
@@ -134,21 +134,21 @@
         </section>
 
         <!-- Navegação de Abas -->
-        <nav class="flex bg-slate-200/60 backdrop-blur-md rounded-none sm:rounded-3xl p-2 mb-10 border-y sm:border border-white sticky top-[128px] z-40">
-            <button onclick="switchTab('meals')" id="tab-meals" class="tab-btn flex-1 flex items-center justify-center gap-4 py-6 rounded-2xl font-bold text-lg uppercase tracking-widest transition-all bg-white text-emerald-600 shadow-sm active-tab-glow">
-                <i data-lucide="utensils" class="w-8 h-8"></i> Plano
+        <nav class="flex bg-slate-200/60 backdrop-blur-md rounded-none sm:rounded-3xl p-3 mb-12 border-y sm:border border-white sticky top-[150px] z-40">
+            <button onclick="switchTab('meals')" id="tab-meals" class="tab-btn flex-1 flex items-center justify-center gap-5 py-8 rounded-[1.5rem] font-bold text-xl uppercase tracking-widest transition-all bg-white text-emerald-600 shadow-sm active-tab-glow">
+                <i data-lucide="utensils" class="w-10 h-10"></i> Plano
             </button>
-            <button onclick="switchTab('shopping')" id="tab-shopping" class="tab-btn flex-1 flex items-center justify-center gap-4 py-6 rounded-2xl font-bold text-lg uppercase tracking-widest transition-all text-slate-500">
-                <i data-lucide="shopping-cart" class="w-8 h-8"></i> Compras
+            <button onclick="switchTab('shopping')" id="tab-shopping" class="tab-btn flex-1 flex items-center justify-center gap-5 py-8 rounded-[1.5rem] font-bold text-xl uppercase tracking-widest transition-all text-slate-500">
+                <i data-lucide="shopping-cart" class="w-10 h-10"></i> Compras
             </button>
-            <button onclick="switchTab('history')" id="tab-history" class="tab-btn flex-1 flex items-center justify-center gap-4 py-6 rounded-2xl font-bold text-lg uppercase tracking-widest transition-all text-slate-500">
-                <i data-lucide="history" class="w-8 h-8"></i> Registo
+            <button onclick="switchTab('history')" id="tab-history" class="tab-btn flex-1 flex items-center justify-center gap-5 py-8 rounded-[1.5rem] font-bold text-xl uppercase tracking-widest transition-all text-slate-500">
+                <i data-lucide="history" class="w-10 h-10"></i> Registo
             </button>
         </nav>
 
         <!-- Conteúdo das Vistas -->
-        <div id="view-meals" class="tab-view space-y-0 sm:space-y-10">
-            <div id="day-selector" class="flex gap-4 overflow-x-auto px-4 sm:px-0 pb-10 no-scrollbar">
+        <div id="view-meals" class="tab-view space-y-0 sm:space-y-12">
+            <div id="day-selector" class="flex gap-5 overflow-x-auto px-6 sm:px-0 pb-12 no-scrollbar">
                 <!-- Injetado via JS -->
             </div>
             
@@ -156,48 +156,48 @@
                 <!-- Injetado via JS -->
             </div>
 
-            <div id="meal-cards-container" class="space-y-0 sm:space-y-6">
+            <div id="meal-cards-container" class="space-y-0 sm:space-y-8">
                 <!-- Injetado via JS -->
             </div>
         </div>
 
-        <div id="view-shopping" class="tab-view hidden space-y-0 sm:space-y-8">
-            <div class="bg-emerald-600 rounded-none sm:rounded-[3rem] p-12 text-white shadow-2xl relative overflow-hidden">
-                <h3 class="font-black text-4xl flex items-center gap-6"><i data-lucide="shopping-cart" class="w-12 h-12"></i> Carrinho</h3>
-                <p id="shopping-summary" class="text-emerald-100 text-lg font-bold uppercase tracking-wider mt-6 italic">A carregar produtos...</p>
+        <div id="view-shopping" class="tab-view hidden space-y-0 sm:space-y-10">
+            <div class="bg-emerald-600 rounded-none sm:rounded-[3.5rem] p-14 text-white shadow-2xl relative overflow-hidden">
+                <h3 class="font-black text-5xl flex items-center gap-8"><i data-lucide="shopping-cart" class="w-16 h-16"></i> Carrinho</h3>
+                <p id="shopping-summary" class="text-emerald-100 text-xl font-bold uppercase tracking-wider mt-8 italic">A carregar produtos...</p>
             </div>
-            <div id="shopping-container" class="space-y-0 sm:space-y-10">
+            <div id="shopping-container" class="space-y-0 sm:space-y-12">
                 <!-- Injetado via JS -->
             </div>
         </div>
 
-        <div id="view-history" class="tab-view hidden space-y-0 sm:space-y-8">
-            <h2 class="text-3xl font-black text-slate-800 flex items-center gap-6 px-6 sm:px-2 uppercase tracking-tight py-6 sm:py-0">
-                <i data-lucide="history" class="w-10 h-10 text-emerald-600"></i> Histórico Semanal
+        <div id="view-history" class="tab-view hidden space-y-0 sm:space-y-10">
+            <h2 class="text-4xl font-black text-slate-800 flex items-center gap-8 px-8 sm:px-2 uppercase tracking-tight py-10 sm:py-0">
+                <i data-lucide="history" class="w-12 h-12 text-emerald-600"></i> Histórico Semanal
             </h2>
-            <div id="history-container" class="space-y-0 sm:space-y-6">
+            <div id="history-container" class="space-y-0 sm:space-y-8">
                 <!-- Injetado via JS -->
             </div>
         </div>
     </main>
 
-    <!-- Navegação Mobile Inferior (Extra Large) -->
-    <div class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-slate-200 px-6 pt-6 pb-14 md:hidden z-50">
+    <!-- Navegação Mobile Inferior (Tamanho Gigante) -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-slate-200 px-8 pt-8 pb-16 md:hidden z-50">
         <div class="flex justify-around items-center max-w-lg mx-auto">
-            <button onclick="switchTab('meals')" class="mobile-tab-btn flex flex-col items-center gap-4 group" data-tab="meals">
-                <div class="p-6 rounded-[2rem] transition-all bg-emerald-500 text-white shadow-2xl active-tab-glow"><i data-lucide="calendar" class="w-10 h-10"></i></div>
-                <span class="text-sm font-black uppercase tracking-widest text-emerald-600">Plano</span>
+            <button onclick="switchTab('meals')" class="mobile-tab-btn flex flex-col items-center gap-5 group" data-tab="meals">
+                <div class="p-8 rounded-[2.5rem] transition-all bg-emerald-500 text-white shadow-2xl active-tab-glow"><i data-lucide="calendar" class="w-12 h-12"></i></div>
+                <span class="text-base font-black uppercase tracking-widest text-emerald-600">Plano</span>
             </button>
-            <button onclick="switchTab('shopping')" class="mobile-tab-btn flex flex-col items-center gap-4 group" data-tab="shopping">
-                <div class="p-6 rounded-[2rem] transition-all relative text-slate-400">
-                    <i data-lucide="shopping-cart" class="w-10 h-10"></i>
-                    <span id="shopping-badge" class="absolute top-2 right-2 bg-red-500 text-white text-xs w-8 h-8 rounded-full flex items-center justify-center font-black border-4 border-white hidden">0</span>
+            <button onclick="switchTab('shopping')" class="mobile-tab-btn flex flex-col items-center gap-5 group" data-tab="shopping">
+                <div class="p-8 rounded-[2.5rem] transition-all relative text-slate-400">
+                    <i data-lucide="shopping-cart" class="w-12 h-12"></i>
+                    <span id="shopping-badge" class="absolute top-2 right-2 bg-red-500 text-white text-sm w-10 h-10 rounded-full flex items-center justify-center font-black border-4 border-white hidden">0</span>
                 </div>
-                <span class="text-sm font-black uppercase tracking-widest text-slate-400">Compras</span>
+                <span class="text-base font-black uppercase tracking-widest text-slate-400">Compras</span>
             </button>
-            <button onclick="switchTab('history')" class="mobile-tab-btn flex flex-col items-center gap-4 group" data-tab="history">
-                <div class="p-6 rounded-[2rem] transition-all text-slate-400"><i data-lucide="history" class="w-10 h-10"></i></div>
-                <span class="text-sm font-black uppercase tracking-widest text-slate-400">Registo</span>
+            <button onclick="switchTab('history')" class="mobile-tab-btn flex flex-col items-center gap-5 group" data-tab="history">
+                <div class="p-8 rounded-[2.5rem] transition-all text-slate-400"><i data-lucide="history" class="w-12 h-12"></i></div>
+                <span class="text-base font-black uppercase tracking-widest text-slate-400">Registo</span>
             </button>
         </div>
     </div>
@@ -373,7 +373,7 @@
         function renderDaySelector() {
             const container = document.getElementById('day-selector');
             container.innerHTML = daysList.map(day => `
-                <button onclick="updateSelectedDay('${day}')" class="px-16 py-6 rounded-[2rem] font-black text-2xl whitespace-nowrap transition-all border ${selectedDay === day ? 'bg-emerald-600 text-white border-emerald-600 shadow-xl scale-110 mx-4' : 'bg-white text-slate-400 border-slate-200'}">
+                <button onclick="updateSelectedDay('${day}')" class="px-20 py-8 rounded-[2.5rem] font-black text-3xl whitespace-nowrap transition-all border ${selectedDay === day ? 'bg-emerald-600 text-white border-emerald-600 shadow-xl scale-110 mx-6' : 'bg-white text-slate-400 border-slate-200'}">
                     ${day}
                 </button>
             `).join('');
@@ -382,16 +382,16 @@
         function renderExerciseCard() {
             const container = document.getElementById('exercise-card');
             container.innerHTML = `
-                <div class="bg-gradient-to-br from-blue-600 to-blue-900 rounded-none sm:rounded-[3rem] p-12 shadow-2xl text-white relative overflow-hidden group mb-0 sm:mb-10">
-                    <div class="absolute top-0 right-0 p-12 opacity-10"><i data-lucide="dumbbell" class="w-40 h-40"></i></div>
-                    <div class="flex flex-col gap-10 relative z-10">
+                <div class="bg-gradient-to-br from-blue-600 to-blue-900 rounded-none sm:rounded-[3.5rem] p-14 shadow-2xl text-white relative overflow-hidden group mb-0 sm:mb-12">
+                    <div class="absolute top-0 right-0 p-14 opacity-10"><i data-lucide="dumbbell" class="w-48 h-48"></i></div>
+                    <div class="flex flex-col gap-12 relative z-10">
                         <div>
-                            <h4 class="text-base font-black uppercase tracking-widest text-blue-100 mb-6 italic">O que treinaste hoje?</h4>
-                            <input type="text" placeholder="Ex: Musculação, Corrida..." class="bg-white/10 border border-white/20 rounded-3xl px-10 py-6 w-full text-white placeholder:text-blue-200 font-bold focus:outline-none focus:bg-white/20" value="${dailyExercise[selectedDay].name}" oninput="handleExerciseInput('name', this.value)">
+                            <h4 class="text-lg font-black uppercase tracking-widest text-blue-100 mb-8 italic">O que treinaste hoje?</h4>
+                            <input type="text" placeholder="Ex: Musculação, Corrida..." class="bg-white/10 border border-white/20 rounded-[2rem] px-12 py-8 w-full text-white placeholder:text-blue-200 font-bold focus:outline-none focus:bg-white/20" value="${dailyExercise[selectedDay].name}" oninput="handleExerciseInput('name', this.value)">
                         </div>
                         <div>
-                            <h4 class="text-base font-black uppercase tracking-widest text-blue-100 mb-6 italic">Gasto Ativo (kcal)</h4>
-                            <input type="number" placeholder="0" class="bg-white/10 border border-white/20 rounded-3xl px-10 py-6 w-full text-white placeholder:text-blue-200 font-bold focus:outline-none focus:bg-white/20 text-center text-4xl" value="${dailyExercise[selectedDay].cals || ''}" oninput="handleExerciseInput('cals', this.value)">
+                            <h4 class="text-lg font-black uppercase tracking-widest text-blue-100 mb-8 italic">Gasto Ativo (kcal)</h4>
+                            <input type="number" placeholder="0" class="bg-white/10 border border-white/20 rounded-[2rem] px-12 py-8 w-full text-white placeholder:text-blue-200 font-bold focus:outline-none focus:bg-white/20 text-center text-5xl" value="${dailyExercise[selectedDay].cals || ''}" oninput="handleExerciseInput('cals', this.value)">
                         </div>
                     </div>
                 </div>
@@ -404,21 +404,21 @@
             container.innerHTML = mealData[selectedDay].map(meal => {
                 const isC = completedMeals[`${selectedDay}-${meal.id}`];
                 return `
-                    <div onclick="toggleMeal('${meal.id}')" class="glass-card rounded-none sm:rounded-[3rem] p-12 border-x-0 sm:border-x transition-all cursor-pointer shadow-md active:scale-[0.96] ${isC ? 'opacity-50 grayscale border-transparent bg-slate-100' : 'border-white'}">
-                        <div class="flex items-center gap-10">
-                            <div class="p-8 rounded-[2.5rem] transition-all ${isC ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-50 text-slate-400 shadow-inner'}">
-                                <i data-lucide="${isC ? 'check-circle-2' : meal.icon}" class="w-14 h-14"></i>
+                    <div onclick="toggleMeal('${meal.id}')" class="glass-card rounded-none sm:rounded-[3.5rem] p-14 border-x-0 sm:border-x transition-all cursor-pointer shadow-md active:scale-[0.96] ${isC ? 'opacity-50 grayscale border-transparent bg-slate-100' : 'border-white'}">
+                        <div class="flex items-center gap-12">
+                            <div class="p-10 rounded-[3rem] transition-all ${isC ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-50 text-slate-400 shadow-inner'}">
+                                <i data-lucide="${isC ? 'check-circle-2' : meal.icon}" class="w-16 h-16"></i>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <div class="flex justify-between items-start mb-4">
-                                    <h4 class="text-base font-black uppercase tracking-widest ${isC ? 'text-emerald-600/50' : 'text-slate-400'}">${meal.title}</h4>
-                                    <div class="flex items-center gap-4">
-                                        <span class="flex items-center gap-3 bg-orange-50 px-4 py-2.5 rounded-2xl text-base font-black text-orange-600"><i data-lucide="flame" class="w-6 h-6"></i> ${meal.cals}</span>
-                                        <span class="flex items-center gap-3 bg-blue-50 px-4 py-2.5 rounded-2xl text-base font-black text-blue-600"><i data-lucide="dna" class="w-6 h-6"></i> ${meal.protein}g</span>
+                                <div class="flex justify-between items-start mb-6">
+                                    <h4 class="text-lg font-black uppercase tracking-widest ${isC ? 'text-emerald-600/50' : 'text-slate-400'}">${meal.title}</h4>
+                                    <div class="flex items-center gap-5">
+                                        <span class="flex items-center gap-4 bg-orange-50 px-5 py-3 rounded-[1.5rem] text-lg font-black text-orange-600"><i data-lucide="flame" class="w-8 h-8"></i> ${meal.cals}</span>
+                                        <span class="flex items-center gap-4 bg-blue-50 px-5 py-3 rounded-[1.5rem] text-lg font-black text-blue-600"><i data-lucide="dna" class="w-8 h-8"></i> ${meal.protein}g</span>
                                     </div>
                                 </div>
-                                <p class="text-3xl font-black text-slate-900 leading-snug ${isC ? 'line-through italic text-slate-400' : ''}">${meal.content}</p>
-                                ${meal.subtitle ? `<p class="text-lg mt-6 text-emerald-600/70 font-bold flex items-center gap-4"><i data-lucide="info" class="w-6 h-6"></i> ${meal.subtitle}</p>` : ''}
+                                <p class="text-4xl font-black text-slate-900 leading-snug ${isC ? 'line-through italic text-slate-400' : ''}">${meal.content}</p>
+                                ${meal.subtitle ? `<p class="text-xl mt-8 text-emerald-600/70 font-bold flex items-center gap-5"><i data-lucide="info" class="w-8 h-8"></i> ${meal.subtitle}</p>` : ''}
                             </div>
                         </div>
                     </div>
@@ -440,24 +440,24 @@
             container.innerHTML = ['Proteína', 'Hidratos', 'Legumes', 'Sopa'].map(cat => {
                 const items = shoppingList.filter(i => i.cat === cat);
                 return `
-                    <div class="bg-white rounded-none sm:rounded-[3rem] p-12 shadow-sm border-y sm:border border-slate-100">
-                        <h3 class="font-black text-slate-800 mb-10 text-lg uppercase tracking-widest border-l-8 border-emerald-500 pl-6 flex justify-between items-center">
-                            ${cat} <span class="bg-slate-50 px-5 py-3 rounded-full text-slate-400 font-bold text-base">${items.filter(i => checkedItems[i.id]).length}/${items.length}</span>
+                    <div class="bg-white rounded-none sm:rounded-[3.5rem] p-14 shadow-sm border-y sm:border border-slate-100">
+                        <h3 class="font-black text-slate-800 mb-12 text-xl uppercase tracking-widest border-l-[10px] border-emerald-500 pl-8 flex justify-between items-center">
+                            ${cat} <span class="bg-slate-50 px-6 py-4 rounded-full text-slate-400 font-bold text-lg">${items.filter(i => checkedItems[i.id]).length}/${items.length}</span>
                         </h3>
-                        <ul class="space-y-8">
+                        <ul class="space-y-10">
                             ${items.map(item => {
                                 const isEx = item.status !== 'Comprar' || item.day !== '2ª';
                                 const check = checkedItems[item.id];
                                 return `
-                                    <li onclick="toggleShopping(${item.id})" class="flex justify-between items-center p-8 rounded-[2.5rem] border transition-all ${check ? 'bg-slate-50 opacity-40 grayscale border-transparent' : isEx ? 'bg-amber-50/50 border-amber-100' : 'bg-white border-slate-100 shadow-sm'}">
-                                        <div class="flex items-center gap-8">
-                                            <i data-lucide="${check ? 'check-square' : 'square'}" class="w-10 h-10 ${check ? 'text-emerald-500' : 'text-slate-300'}"></i>
+                                    <li onclick="toggleShopping(${item.id})" class="flex justify-between items-center p-10 rounded-[3rem] border transition-all ${check ? 'bg-slate-50 opacity-40 grayscale border-transparent' : isEx ? 'bg-amber-50/50 border-amber-100' : 'bg-white border-slate-100 shadow-sm'}">
+                                        <div class="flex items-center gap-10">
+                                            <i data-lucide="${check ? 'check-square' : 'square'}" class="w-12 h-12 ${check ? 'text-emerald-500' : 'text-slate-300'}"></i>
                                             <div class="flex flex-col">
-                                                <span class="text-2xl font-black leading-tight mb-2">${item.prod}</span>
-                                                <span class="text-base text-slate-400 font-bold uppercase tracking-tighter">${item.qty} • ${item.day}</span>
+                                                <span class="text-3xl font-black leading-tight mb-3">${item.prod}</span>
+                                                <span class="text-lg text-slate-400 font-bold uppercase tracking-tighter">${item.qty} • ${item.day}</span>
                                             </div>
                                         </div>
-                                        <span class="text-xl font-black text-slate-900 ml-8">${item.price.toFixed(2)}€</span>
+                                        <span class="text-2xl font-black text-slate-900 ml-10">${item.price.toFixed(2)}€</span>
                                     </li>
                                 `;
                             }).join('')}
@@ -471,32 +471,32 @@
         function renderHistory() {
             const container = document.getElementById('history-container');
             if (history.length === 0) {
-                container.innerHTML = `<div class="p-32 text-center opacity-30 font-black uppercase text-xl tracking-widest italic">Registo Vazio</div>`;
+                container.innerHTML = `<div class="p-40 text-center opacity-30 font-black uppercase text-2xl tracking-widest italic">Registo Vazio</div>`;
             } else {
                 container.innerHTML = history.map(entry => `
-                    <div class="bg-white rounded-none sm:rounded-[3rem] p-12 shadow-sm border-y sm:border border-slate-100 overflow-hidden">
+                    <div class="bg-white rounded-none sm:rounded-[3.5rem] p-14 shadow-sm border-y sm:border border-slate-100 overflow-hidden">
                         <div class="flex justify-between items-center">
                             <div class="min-w-0 flex-1">
-                                <h3 class="text-2xl font-black text-slate-800 mb-6">${entry.date}</h3>
-                                <div class="flex flex-wrap gap-5">
-                                    <span class="bg-orange-50 text-orange-600 px-5 py-3 rounded-[1.5rem] text-sm font-black uppercase tracking-tighter">~${entry.avgCals} kcal</span>
-                                    <span class="bg-blue-50 text-blue-600 px-5 py-3 rounded-[1.5rem] text-sm font-black uppercase tracking-tighter">~${entry.avgProtein}g P</span>
-                                    <span class="bg-blue-100 text-blue-800 px-5 py-3 rounded-[1.5rem] text-sm font-black uppercase tracking-tighter">${entry.totalBurned} kcal🔥</span>
+                                <h3 class="text-3xl font-black text-slate-800 mb-8">${entry.date}</h3>
+                                <div class="flex flex-wrap gap-6">
+                                    <span class="bg-orange-50 text-orange-600 px-6 py-4 rounded-[2rem] text-base font-black uppercase tracking-tighter">~${entry.avgCals} kcal</span>
+                                    <span class="bg-blue-50 text-blue-600 px-6 py-4 rounded-[2rem] text-base font-black uppercase tracking-tighter">~${entry.avgProtein}g P</span>
+                                    <span class="bg-blue-100 text-blue-800 px-6 py-4 rounded-[2rem] text-base font-black uppercase tracking-tighter">${entry.totalBurned} kcal🔥</span>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-8 ml-10">
+                            <div class="flex items-center gap-10 ml-12">
                                 <div class="text-right">
-                                    <div class="text-sm text-slate-400 font-black uppercase tracking-widest mb-2">Meta</div>
-                                    <div class="text-5xl font-black ${entry.completion > 80 ? 'text-emerald-600' : 'text-amber-500'}">${entry.completion}%</div>
+                                    <div class="text-base text-slate-400 font-black uppercase tracking-widest mb-3">Meta</div>
+                                    <div class="text-6xl font-black ${entry.completion > 80 ? 'text-emerald-600' : 'text-amber-500'}">${entry.completion}%</div>
                                 </div>
-                                <button onclick="toggleHistoryDetails(${entry.id})" class="p-6 bg-slate-50 rounded-[2rem] text-slate-400"><i data-lucide="${expandedHistoryId === entry.id ? 'chevron-up' : 'chevron-down'}" class="w-10 h-10"></i></button>
+                                <button onclick="toggleHistoryDetails(${entry.id})" class="p-8 bg-slate-50 rounded-[2.5rem] text-slate-400"><i data-lucide="${expandedHistoryId === entry.id ? 'chevron-up' : 'chevron-down'}" class="w-12 h-12"></i></button>
                             </div>
                         </div>
                         ${expandedHistoryId === entry.id ? `
-                            <div class="mt-12 pt-12 border-t border-slate-100 animate-in slide-in-from-top-2 duration-300">
-                                <h4 class="text-base font-black text-slate-400 uppercase tracking-widest mb-6 italic">Resumo de Atividade Física</h4>
-                                <div class="space-y-5">
-                                    ${entry.exercises.map(ex => `<div class="text-lg font-bold text-slate-600 italic flex items-center gap-5"><i data-lucide="dumbbell" class="w-8 h-8 text-blue-400"></i> ${ex}</div>`).join('')}
+                            <div class="mt-14 pt-14 border-t border-slate-100 animate-in slide-in-from-top-2 duration-300">
+                                <h4 class="text-lg font-black text-slate-400 uppercase tracking-widest mb-8 italic">Resumo de Atividade Física</h4>
+                                <div class="space-y-6">
+                                    ${entry.exercises.map(ex => `<div class="text-xl font-bold text-slate-600 italic flex items-center gap-6"><i data-lucide="dumbbell" class="w-10 h-10 text-blue-400"></i> ${ex}</div>`).join('')}
                                 </div>
                             </div>
                         ` : ''}
