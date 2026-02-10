@@ -243,7 +243,7 @@
       <div class="flex items-center space-x-4">
         <div class="bg-white/10 p-2.5 rounded-2xl border border-white/10">
           <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 9 9 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
         </div>
         <div>
@@ -259,7 +259,7 @@
           <button onclick="switchTab('swot')" id="tab-swot" class="tab-btn px-4 py-1.5 rounded-lg text-xs font-bold transition-all">ANÁLISE SWOT</button>
         </div>
 
-        <!-- ✅ Só deve aparecer na aba DOCUMENTAÇÃO -->
+        <!-- Só aparece na aba DOCUMENTAÇÃO -->
         <button id="btn-new-doc" onclick="openModal()" class="bg-white/10 hover:bg-white/20 text-white px-5 py-2 rounded-xl text-xs font-black transition-all border border-white/20">
           + NOVO DOC
         </button>
@@ -315,7 +315,6 @@
           <p class="text-slate-500 text-sm">Matriz de Forças, Fraquezas, Oportunidades e Ameaças</p>
         </div>
 
-        <!-- ✅ AÇÕES SWOT -->
         <div class="flex items-center gap-2">
           <a
             href="https://docs.google.com/spreadsheets/d/1n-9nPmr_owOXxOhfIqqIGnoBu8MdbkeknW1nRSKF6AI/edit?usp=sharing"
@@ -338,9 +337,18 @@
       <!-- Barra de Filtros SWOT -->
       <div class="glass-card p-4 space-y-4">
         <div class="flex flex-col md:flex-row gap-4 items-center">
+
           <div class="relative w-full md:w-1/4">
             <input type="text" id="searchSwot" onkeyup="applySwotFilters()" placeholder="Filtrar texto..." class="w-full bg-slate-50 border border-slate-200 pl-10 pr-4 py-2 rounded-xl text-xs outline-none focus:border-emerald-500">
             <svg class="absolute left-3 top-2.5 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          </div>
+
+          <!-- ✅ NOVO: Filtro Ativo / Não Ativo -->
+          <div class="flex flex-wrap gap-2 items-center text-[10px] font-bold uppercase text-slate-400">
+            <span class="mr-2 whitespace-nowrap">Estado:</span>
+            <button onclick="setActiveFilter('TODOS')" id="filter-active-TODOS" class="swot-filter-btn active px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50">Tudo</button>
+            <button onclick="setActiveFilter('ATIVOS')" id="filter-active-ATIVOS" class="swot-filter-btn px-3 py-1.5 rounded-lg border border-emerald-200 hover:bg-emerald-50">Ativos</button>
+            <button onclick="setActiveFilter('NAO_ATIVOS')" id="filter-active-NAO_ATIVOS" class="swot-filter-btn px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50">Não ativos</button>
           </div>
 
           <div class="flex flex-wrap gap-2 items-center text-[10px] font-bold uppercase text-slate-400 overflow-x-auto pb-2 md:pb-0">
@@ -365,7 +373,6 @@
       </div>
 
       <div id="swot-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
-        <!-- Forças -->
         <div id="quadrant-FORÇAS" class="space-y-4">
           <div class="flex items-center gap-3 pb-2 border-b-2 border-emerald-500/20">
             <div class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white shadow-lg">
@@ -376,7 +383,6 @@
           <div id="swot-forcas" class="space-y-4 min-h-[50px]"></div>
         </div>
 
-        <!-- Oportunidades -->
         <div id="quadrant-OPORTUNIDADES" class="space-y-4">
           <div class="flex items-center gap-3 pb-2 border-b-2 border-blue-500/20">
             <div class="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center text-white shadow-lg">
@@ -387,7 +393,6 @@
           <div id="swot-oportunidades" class="space-y-4 min-h-[50px]"></div>
         </div>
 
-        <!-- Fraquezas -->
         <div id="quadrant-FRAQUEZAS" class="space-y-4">
           <div class="flex items-center gap-3 pb-2 border-b-2 border-amber-500/20">
             <div class="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center text-white shadow-lg">
@@ -398,7 +403,6 @@
           <div id="swot-fraquezas" class="space-y-4 min-h-[50px]"></div>
         </div>
 
-        <!-- Ameaças -->
         <div id="quadrant-AMEAÇAS" class="space-y-4">
           <div class="flex items-center gap-3 pb-2 border-b-2 border-red-500/20">
             <div class="w-8 h-8 rounded-lg bg-red-500 flex items-center justify-center text-white shadow-lg">
@@ -414,11 +418,7 @@
 
   <script>
     const MAIN_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzWI5Yq4Ng61JUwcM0Okg1xfaXTJ1fu4g7c_aYWOWIVqeEv9_JBhnfKw6DgNwkHVg4wDg/exec';
-
-    // ✅ LEITURA SWOT (JSONP)
     const SWOT_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz82GdxZQk3wDPOsdP6z1LeEWq7wX9MPuNFCtoHfR1JJ3cLkrDLBfC50o9-W-vbWRZA/exec';
-
-    // ✅ GRAVAÇÃO SWOT (POST)
     const SWOT_WRITE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQNDfWCVPYPz84y7CU2BUYWbN-Orh0hq7CLzmjuCu1vrDnKRe7WgskN6ZXjsSQDSHJ/exec';
 
     let allDocuments = [];
@@ -426,7 +426,9 @@
     let currentSwotFilterCategory = 'TODOS';
     let currentSwotFilterQuadrant = 'TODOS';
 
-    // --- DICIONÁRIO SWOT: KEYWORDS E ÍCONES ---
+    // ✅ NOVO: filtro por estado (ativos / não ativos)
+    let currentSwotActiveFilter = 'TODOS'; // TODOS | ATIVOS | NAO_ATIVOS
+
     const swotCategories = [
       { key: "Energia", icon: '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>', matches: ["energia", "eletrica", "consumo", "gas", "fotovoltaico", "eficiencia"] },
       { key: "Resíduos", icon: '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>', matches: ["residuo", "lixo", "reciclagem", "perigoso", "ecoponto", "quimico"] },
@@ -456,7 +458,6 @@
     function openModal(){ document.getElementById('adminModal').classList.add('active'); }
     function closeModal(){ document.getElementById('adminModal').classList.remove('active'); }
 
-    // --- MODAL SWOT ---
     function openSwotModal() {
       const m = document.getElementById('swotModal');
       m.classList.remove('hidden');
@@ -521,7 +522,6 @@
       }
     }
 
-    // ✅ Mostra/oculta o botão "+ NOVO DOC" conforme o separador
     function toggleNewDocButton(tab) {
       const btn = document.getElementById('btn-new-doc');
       if (!btn) return;
@@ -535,7 +535,6 @@
       document.getElementById('tab-docs').classList.remove('active');
       document.getElementById('tab-swot').classList.remove('active');
 
-      // ✅ toggle do botão no header
       toggleNewDocButton(tab);
 
       if(tab === 'docs') {
@@ -585,8 +584,10 @@
         }
 
         swotData = data;
-        renderSwot(data);
+
+        // aplica filtros actuais (inclui ativos/não ativos)
         applySwotFilters();
+
         delete window[callbackName];
       };
 
@@ -626,6 +627,17 @@
         </tr>
       `).join('');
       document.getElementById('stat-docs').innerText = data.length;
+    }
+
+    // ✅ NOVO: mudar filtro Ativos/Não Ativos
+    function setActiveFilter(val) {
+      currentSwotActiveFilter = val;
+
+      document.querySelectorAll('[id^="filter-active-"]').forEach(btn => btn.classList.remove('active'));
+      const el = document.getElementById(`filter-active-${val}`);
+      if (el) el.classList.add('active');
+
+      applySwotFilters();
     }
 
     function setSwotFilter(cat) {
@@ -677,6 +689,16 @@
         const codigo = getVal('código') || getVal('Código') || getVal('ID') || '';
         const tomada = getVal('TOMADA DE AÇÃO?') || '';
 
+        // determinar activo
+        const tomadaNorm = normUpper(tomada);
+        const isAtivo = (tomadaNorm === 'SIM' || tomadaNorm === 'S' || tomadaNorm === 'YES' || tomadaNorm === 'Y' || tomadaNorm === 'ATIVO' || tomadaNorm === 'ACTIVO');
+
+        // filtro por activos/não activos
+        const matchesActive =
+          currentSwotActiveFilter === 'TODOS' ||
+          (currentSwotActiveFilter === 'ATIVOS' && isAtivo) ||
+          (currentSwotActiveFilter === 'NAO_ATIVOS' && !isAtivo);
+
         let actionsText = '';
         for (let i = 1; i <= 6; i++) {
           const acao = getVal(`AÇÃO ${i}`) || '';
@@ -691,10 +713,10 @@
         const matchesQuadrant = currentSwotFilterQuadrant === 'TODOS' || itemQuadrant === currentSwotFilterQuadrant;
         const matchesSearch = !searchTerm || searchable.includes(normTxt(searchTerm));
 
-        return matchesTheme && matchesQuadrant && matchesSearch;
+        return matchesTheme && matchesQuadrant && matchesSearch && matchesActive;
       });
 
-      renderSwot(filtered, true);
+      renderSwot(filtered);
     }
 
     function renderSwot(data) {
@@ -761,7 +783,7 @@
         }
 
         const tomada = norm(getVal('TOMADA DE AÇÃO?'));
-        const isAtivo = (tomada === 'SIM' || tomada === 'S' || tomada === 'YES' || tomada === 'Y');
+        const isAtivo = (tomada === 'SIM' || tomada === 'S' || tomada === 'YES' || tomada === 'Y' || tomada === 'ATIVO' || tomada === 'ACTIVO');
 
         const card = `
           <div class="glass-card p-5 ${borderClass}">
@@ -794,36 +816,6 @@
           el.innerHTML = '<p class="text-[10px] text-slate-400 font-medium italic py-4">Nenhum registo identificado com estes filtros.</p>';
         }
       });
-    }
-
-    async function addDocumentToSheet(e) {
-      e.preventDefault();
-      const btn = document.getElementById('btnAddDoc');
-      const type = document.getElementById('docType').value;
-      const name = document.getElementById('docName').value;
-      const link = document.getElementById('docLink').value;
-
-      btn.disabled = true;
-      btn.innerText = 'A GRAVAR...';
-
-      try {
-        const res = await fetch(MAIN_APPS_SCRIPT_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain' },
-          body: JSON.stringify({ type, name, link })
-        });
-        const out = await res.json();
-        if (out.ok) {
-          closeModal();
-          e.target.reset();
-          fetchFromSheet();
-        }
-      } catch (err) {
-        alert('Erro na comunicação com a base de dados.');
-      } finally {
-        btn.disabled = false;
-        btn.innerText = 'GRAVAR NO SISTEMA';
-      }
     }
 
     function filterDocs() {
@@ -868,7 +860,6 @@
     }
 
     window.onload = () => {
-      // estado inicial: DOCUMENTAÇÃO
       toggleNewDocButton('docs');
       fetchFromSheet();
       fetchSwot();
