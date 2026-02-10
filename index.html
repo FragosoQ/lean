@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NutriCore - Suporte Metabólico</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -12,13 +12,14 @@
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
         }
 
         .no-scrollbar::-webkit-scrollbar {
@@ -30,43 +31,48 @@
             scrollbar-width: none;
         }
 
-        .transition-all {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        /* Melhoria de inputs para mobile */
+        input {
+            font-size: 16px !important; /* Impede zoom no iOS ao focar */
         }
 
-        .neon-shadow-emerald {
-            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.2);
+        .transition-all {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .active-tab-glow {
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
         }
     </style>
 </head>
-<body class="selection:bg-emerald-100 selection:text-emerald-900 pb-24 min-h-screen">
-    <!-- Efeitos de fundo -->
-    <div class="fixed top-[-5%] left-[-5%] w-[50%] h-[50%] bg-emerald-100/40 blur-[100px] rounded-full pointer-events-none -z-10"></div>
-    <div class="fixed bottom-[-5%] right-[-5%] w-[50%] h-[50%] bg-blue-100/40 blur-[100px] rounded-full pointer-events-none -z-10"></div>
+<body class="selection:bg-emerald-100 selection:text-emerald-900 pb-28 min-h-screen">
+    <!-- Efeitos de fundo suaves -->
+    <div class="fixed top-[-10%] left-[-10%] w-[60%] h-[40%] bg-emerald-100/30 blur-[120px] rounded-full pointer-events-none -z-10"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[60%] h-[40%] bg-blue-100/30 blur-[120px] rounded-full pointer-events-none -z-10"></div>
 
-    <!-- Cabeçalho -->
-    <header class="sticky top-0 z-50 bg-white/70 backdrop-blur-md border-b border-slate-200 p-5">
+    <!-- Cabeçalho Otimizado -->
+    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-200 px-4 py-3 sm:p-5">
         <div class="max-w-4xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="p-2.5 bg-emerald-500 rounded-xl shadow-lg shadow-emerald-200">
-                    <i data-lucide="zap" class="w-5 h-5 text-white fill-white"></i>
+            <div class="flex items-center gap-2 sm:gap-3">
+                <div class="p-2 bg-emerald-500 rounded-xl shadow-md">
+                    <i data-lucide="zap" class="w-4 h-4 sm:w-5 sm:h-5 text-white fill-white"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-black tracking-tight text-slate-900 uppercase italic">
+                    <h1 class="text-lg sm:text-xl font-black tracking-tight text-slate-900 uppercase italic leading-none">
                         Nutri<span class="text-emerald-600">Core</span>
                     </h1>
-                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Protocolo Metabólico</p>
+                    <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Protocolo Metabólico</p>
                 </div>
             </div>
-            <div class="text-right flex items-center gap-3 sm:gap-6">
+            <div class="text-right flex items-center gap-2 sm:gap-6">
                 <div class="flex flex-col items-end">
-                    <div class="text-[9px] uppercase tracking-wider text-slate-400 font-bold mb-0.5">Balanço Hoje</div>
-                    <div class="flex items-center gap-2">
-                        <div class="flex items-center gap-1 text-[11px] font-black text-orange-600 bg-orange-50 px-2 py-0.5 rounded-lg border border-orange-100 shadow-sm">
-                            <i data-lucide="flame" class="w-3 h-3"></i> <span id="header-net-cals">0</span> kcal (Net)
+                    <div class="text-[8px] uppercase tracking-wider text-slate-400 font-bold mb-0.5">Balanço Hoje</div>
+                    <div class="flex items-center gap-1.5">
+                        <div class="flex items-center gap-1 text-[10px] font-black text-orange-600 bg-orange-50 px-2 py-0.5 rounded-lg border border-orange-100 shadow-sm">
+                            <i data-lucide="flame" class="w-2.5 h-2.5"></i> <span id="header-net-cals">0</span>
                         </div>
-                        <div class="flex items-center gap-1 text-[11px] font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100 shadow-sm">
-                            <i data-lucide="dna" class="w-3 h-3"></i> <span id="header-protein">0</span>g P
+                        <div class="flex items-center gap-1 text-[10px] font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100 shadow-sm">
+                            <i data-lucide="dna" class="w-2.5 h-2.5"></i> <span id="header-protein">0</span>g
                         </div>
                     </div>
                 </div>
@@ -75,111 +81,114 @@
     </header>
 
     <main class="max-w-4xl mx-auto p-4 relative z-10">
-        <!-- Dashboard -->
-        <section id="dashboard" class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-8">
-            <div class="glass-card rounded-3xl p-5 shadow-xl shadow-slate-200/50 border border-white relative overflow-hidden group">
-                <div class="flex items-center justify-between mb-3">
-                    <h2 class="text-[10px] font-black flex items-center gap-2 text-slate-400 uppercase tracking-widest">
-                        <i data-lucide="activity" class="w-4 h-4 text-emerald-500"></i> Progresso
+        <!-- Dashboard Grelha 2x2 em Mobile -->
+        <section id="dashboard" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+            <div class="glass-card rounded-2xl p-4 shadow-sm border border-white relative overflow-hidden flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1">
+                        <i data-lucide="activity" class="w-3 h-3 text-emerald-500"></i> Progresso
                     </h2>
-                    <span id="weekly-progress-text" class="text-emerald-600 font-black text-lg">0%</span>
+                    <span id="weekly-progress-text" class="text-emerald-600 font-black text-sm">0%</span>
                 </div>
-                <div class="w-full bg-slate-100 rounded-full h-2.5 p-1 border border-slate-200/50">
-                    <div id="weekly-progress-bar" class="bg-gradient-to-r from-emerald-400 to-emerald-600 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div>
+                <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                    <div id="weekly-progress-bar" class="bg-emerald-500 h-full rounded-full transition-all duration-700" style="width: 0%"></div>
                 </div>
-                <button onclick="archiveWeek()" id="btn-archive" class="mt-3 w-full py-2 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-tighter flex items-center justify-center gap-2 hover:bg-emerald-600 transition-colors shadow-lg hidden">
-                    <i data-lucide="archive" class="w-3 h-3"></i> Arquivar Semana
+                <button onclick="archiveWeek()" id="btn-archive" class="mt-2 w-full py-1.5 bg-slate-900 text-white rounded-lg text-[8px] font-black uppercase tracking-tighter flex items-center justify-center gap-1 hidden transition-all active:scale-95">
+                    <i data-lucide="archive" class="w-2.5 h-2.5"></i> Arquivar
                 </button>
             </div>
-            <div class="glass-card rounded-3xl p-5 shadow-xl shadow-slate-200/50 border border-white">
-                <div class="flex items-center justify-between mb-2">
-                    <h2 class="text-[10px] font-black flex items-center gap-2 text-slate-400 uppercase tracking-widest"><i data-lucide="plus" class="w-4 h-4 text-orange-500"></i> Consumido</h2>
-                    <span id="consumed-cals-text" class="text-orange-600 font-mono font-bold text-sm">0 kcal</span>
+            <div class="glass-card rounded-2xl p-4 shadow-sm border border-white">
+                <div class="flex items-center justify-between mb-1.5">
+                    <h2 class="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1"><i data-lucide="plus" class="w-3 h-3 text-orange-500"></i> Ingerido</h2>
+                    <span id="consumed-cals-text" class="text-orange-600 font-mono font-bold text-[10px]">0 kcal</span>
                 </div>
-                <div class="w-full bg-slate-100 rounded-full h-2">
+                <div class="w-full bg-slate-100 rounded-full h-1.5">
                     <div id="consumed-cals-bar" class="bg-orange-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
                 </div>
             </div>
-            <div class="glass-card rounded-3xl p-5 shadow-xl shadow-slate-200/50 border border-white">
-                <div class="flex items-center justify-between mb-2">
-                    <h2 class="text-[10px] font-black flex items-center gap-2 text-slate-400 uppercase tracking-widest"><i data-lucide="minus" class="w-4 h-4 text-blue-500"></i> Queimado</h2>
-                    <span id="burned-cals-text" class="text-blue-600 font-mono font-bold text-sm">0 kcal</span>
+            <div class="glass-card rounded-2xl p-4 shadow-sm border border-white">
+                <div class="flex items-center justify-between mb-1.5">
+                    <h2 class="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1"><i data-lucide="minus" class="w-3 h-3 text-blue-500"></i> Gasto</h2>
+                    <span id="burned-cals-text" class="text-blue-600 font-mono font-bold text-[10px]">0 kcal</span>
                 </div>
-                <div class="w-full bg-slate-100 rounded-full h-2">
+                <div class="w-full bg-slate-100 rounded-full h-1.5">
                     <div id="burned-cals-bar" class="bg-blue-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
                 </div>
             </div>
-            <div class="glass-card rounded-3xl p-5 shadow-xl shadow-slate-200/50 border border-white">
-                <div class="flex items-center justify-between mb-2">
-                    <h2 class="text-[10px] font-black flex items-center gap-2 text-slate-400 uppercase tracking-widest"><i data-lucide="dna" class="w-4 h-4 text-emerald-500"></i> Proteína</h2>
-                    <span id="protein-text" class="text-emerald-600 font-mono font-bold text-sm">0g</span>
+            <div class="glass-card rounded-2xl p-4 shadow-sm border border-white">
+                <div class="flex items-center justify-between mb-1.5">
+                    <h2 class="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1"><i data-lucide="dna" class="w-3 h-3 text-emerald-500"></i> Proteína</h2>
+                    <span id="protein-text" class="text-emerald-600 font-mono font-bold text-[10px]">0g</span>
                 </div>
-                <div class="w-full bg-slate-100 rounded-full h-2">
+                <div class="w-full bg-slate-100 rounded-full h-1.5">
                     <div id="protein-bar" class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
                 </div>
             </div>
         </section>
 
-        <!-- Navegação por Abas -->
-        <nav class="flex bg-slate-200/50 backdrop-blur-md rounded-2xl p-1.5 mb-8 border border-white shadow-sm sticky top-24 z-40">
-            <button onclick="switchTab('meals')" id="tab-meals" class="tab-btn flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all bg-white text-emerald-600 shadow-md">
-                <i data-lucide="utensils" class="w-4 h-4"></i> Plano
+        <!-- Navegação Principal -->
+        <nav class="flex bg-slate-200/40 backdrop-blur-md rounded-2xl p-1 mb-6 border border-white shadow-sm sticky top-20 z-40">
+            <button onclick="switchTab('meals')" id="tab-meals" class="tab-btn flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all bg-white text-emerald-600 shadow-sm active-tab-glow">
+                <i data-lucide="utensils" class="w-3.5 h-3.5"></i> Plano
             </button>
-            <button onclick="switchTab('shopping')" id="tab-shopping" class="tab-btn flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all text-slate-500 hover:text-slate-800">
-                <i data-lucide="shopping-cart" class="w-4 h-4"></i> Compras
+            <button onclick="switchTab('shopping')" id="tab-shopping" class="tab-btn flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all text-slate-500">
+                <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i> Compras
             </button>
-            <button onclick="switchTab('history')" id="tab-history" class="tab-btn flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all text-slate-500 hover:text-slate-800">
-                <i data-lucide="history" class="w-4 h-4"></i> Registo
+            <button onclick="switchTab('history')" id="tab-history" class="tab-btn flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all text-slate-500">
+                <i data-lucide="history" class="w-3.5 h-3.5"></i> Registo
             </button>
         </nav>
 
         <!-- Conteúdo das Abas -->
-        <div id="view-meals" class="tab-view space-y-6">
-            <div id="day-selector" class="flex gap-2 overflow-x-auto pb-4 no-scrollbar">
+        <div id="view-meals" class="tab-view space-y-4">
+            <div id="day-selector" class="flex gap-2 overflow-x-auto pb-2 no-scrollbar scroll-smooth">
                 <!-- Injetado via JS -->
             </div>
             <div id="exercise-card">
                 <!-- Injetado via JS -->
             </div>
-            <div id="meal-cards-container" class="grid grid-cols-1 gap-4">
+            <div id="meal-cards-container" class="space-y-3">
                 <!-- Injetado via JS -->
             </div>
         </div>
 
-        <div id="view-shopping" class="tab-view hidden space-y-6">
-            <div class="bg-emerald-600 rounded-3xl p-6 text-white shadow-xl shadow-emerald-200 relative overflow-hidden italic">
-                <h3 class="font-black text-lg flex items-center gap-2"><i data-lucide="shopping-cart" class="w-6 h-6"></i> Checklist Semanal</h3>
-                <p id="shopping-summary" class="text-emerald-100 text-xs font-bold uppercase tracking-wider mt-1">0 de 0 itens no carrinho</p>
+        <div id="view-shopping" class="tab-view hidden space-y-4">
+            <div class="bg-emerald-600 rounded-2xl p-5 text-white shadow-lg relative overflow-hidden">
+                <h3 class="font-black text-base flex items-center gap-2"><i data-lucide="shopping-cart" class="w-5 h-5"></i> Lista de Compras</h3>
+                <p id="shopping-summary" class="text-emerald-100 text-[10px] font-bold uppercase tracking-wider mt-1">Carregando itens...</p>
             </div>
-            <div id="shopping-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div id="shopping-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Injetado via JS -->
             </div>
         </div>
 
         <div id="view-history" class="tab-view hidden space-y-4">
-            <h2 class="text-lg font-black text-slate-800 flex items-center gap-2 px-2">
-                <i data-lucide="history" class="w-5 h-5 text-emerald-600"></i> Registo Histórico
+            <h2 class="text-base font-black text-slate-800 flex items-center gap-2 px-1">
+                <i data-lucide="history" class="w-4 h-4 text-emerald-600"></i> Histórico Semanal
             </h2>
-            <div id="history-container" class="space-y-4">
+            <div id="history-container" class="space-y-3">
                 <!-- Injetado via JS -->
             </div>
         </div>
     </main>
 
-    <!-- Navegação Mobile -->
-    <div class="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t border-slate-200 p-4 pb-8 md:hidden shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
+    <!-- Barra de Navegação Inferior (Mobile Fix) -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-200 px-4 pt-3 pb-6 md:hidden z-50">
         <div class="flex justify-around items-center max-w-lg mx-auto">
-            <button onclick="switchTab('meals')" class="mobile-tab-btn flex flex-col items-center gap-1.5 transition-all text-emerald-600 scale-110" data-tab="meals">
-                <div class="p-2.5 rounded-2xl bg-emerald-500 text-white shadow-lg shadow-emerald-200"><i data-lucide="calendar" class="w-5 h-5"></i></div>
-                <span class="text-[9px] font-black uppercase tracking-widest">Plano</span>
+            <button onclick="switchTab('meals')" class="mobile-tab-btn flex flex-col items-center gap-1 group" data-tab="meals">
+                <div class="p-2.5 rounded-xl transition-all bg-emerald-500 text-white shadow-lg active-tab-glow"><i data-lucide="calendar" class="w-5 h-5"></i></div>
+                <span class="text-[8px] font-black uppercase tracking-widest text-emerald-600">Plano</span>
             </button>
-            <button onclick="switchTab('shopping')" class="mobile-tab-btn flex flex-col items-center gap-1.5 transition-all text-slate-400" data-tab="shopping">
-                <div class="p-2.5 rounded-2xl relative"><i data-lucide="shopping-cart" class="w-5 h-5"></i><span id="shopping-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center font-black border-2 border-white hidden">0</span></div>
-                <span class="text-[9px] font-black uppercase tracking-widest">Compras</span>
+            <button onclick="switchTab('shopping')" class="mobile-tab-btn flex flex-col items-center gap-1 group" data-tab="shopping">
+                <div class="p-2.5 rounded-xl transition-all relative text-slate-400 group-hover:bg-slate-50">
+                    <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                    <span id="shopping-badge" class="absolute top-1 right-1 bg-red-500 text-white text-[7px] w-3.5 h-3.5 rounded-full flex items-center justify-center font-black border border-white hidden">0</span>
+                </div>
+                <span class="text-[8px] font-black uppercase tracking-widest text-slate-400">Compras</span>
             </button>
-            <button onclick="switchTab('history')" class="mobile-tab-btn flex flex-col items-center gap-1.5 transition-all text-slate-400" data-tab="history">
-                <div class="p-2.5 rounded-2xl"><i data-lucide="history" class="w-5 h-5"></i></div>
-                <span class="text-[9px] font-black uppercase tracking-widest">Registo</span>
+            <button onclick="switchTab('history')" class="mobile-tab-btn flex flex-col items-center gap-1 group" data-tab="history">
+                <div class="p-2.5 rounded-xl transition-all text-slate-400 group-hover:bg-slate-50"><i data-lucide="history" class="w-5 h-5"></i></div>
+                <span class="text-[8px] font-black uppercase tracking-widest text-slate-400">Registo</span>
             </button>
         </div>
     </div>
@@ -188,29 +197,14 @@
         // --- ESTADO DA APLICAÇÃO ---
         let activeTab = 'meals';
         let selectedDay = '2ª';
-        let completedMeals = {}; // Formato: {'2ª-pq': true}
-        let checkedItems = {};   // Formato: {1: true}
-        let dailyExercise = {
-            '2ª': { name: '', cals: 0 },
-            '3ª': { name: '', cals: 0 },
-            '4ª': { name: '', cals: 0 },
-            '5ª': { name: '', cals: 0 },
-            '6ª': { name: '', cals: 0 }
-        };
+        let completedMeals = {};
+        let checkedItems = {};
+        let dailyExercise = { '2ª': { name: '', cals: 0 }, '3ª': { name: '', cals: 0 }, '4ª': { name: '', cals: 0 }, '5ª': { name: '', cals: 0 }, '6ª': { name: '', cals: 0 } };
         let history = [
-            { 
-                id: 1, 
-                date: "03 Fev - 09 Fev", 
-                completion: 85, 
-                avgCals: 1240, 
-                avgProtein: 98, 
-                totalBurned: 1200,
-                exercises: ["Corrida 5km", "Treino de Pernas", "Natação"]
-            }
+            { id: 1, date: "03 Fev - 09 Fev", completion: 85, avgCals: 1240, avgProtein: 98, totalBurned: 1200, exercises: ["Corrida 5km", "Treino Pernas"] }
         ];
         let expandedHistoryId = null;
 
-        // --- DADOS FIXOS ---
         const daysList = ['2ª', '3ª', '4ª', '5ª', '6ª'];
         
         const mealData = {
@@ -234,14 +228,14 @@
             ],
             '5ª': [
                 { id: 'pq', title: "Pequeno-Almoço", content: "2 ovos + 1 banana", cals: 245, protein: 14, icon: 'clock', color: 'text-orange-500' },
-                { id: 'al', title: "Almoço", content: "Frango 150g + batata 250g", subtitle: "Legumes: Mistura de Brócolos, Couve-flor e cenoura", cals: 410, protein: 38, icon: 'activity', color: 'text-blue-500' },
+                { id: 'al', title: "Almoço", content: "Frango 150g + batata 250g", subtitle: "Legumes: Mistura Vegetais", cals: 410, protein: 38, icon: 'activity', color: 'text-blue-500' },
                 { id: 'la', title: "Lanche", content: "Skyr (170g)", cals: 110, protein: 18, icon: 'zap', color: 'text-purple-500' },
                 { id: 'ja', title: "Jantar", content: "Sopa + iogurte natural + 1 scoop whey", subtitle: "Dose: 350 ml", cals: 320, protein: 28, icon: 'chef-hat', color: 'text-emerald-500' }
             ],
             '6ª': [
                 { id: 'pq', title: "Pequeno-Almoço", content: "2 ovos + 1 banana", cals: 245, protein: 14, icon: 'clock', color: 'text-orange-500' },
-                { id: 'al', title: "Almoço", content: "Salmão 150g + grão 100g", subtitle: "Legumes: Couve de Bruxelas", cals: 495, protein: 36, icon: 'activity', color: 'text-blue-500' },
-                { id: 'la', title: "Lanche", content: "Iogurte natural + 1/2 lata atum", cals: 105, protein: 15, icon: 'zap', color: 'text-purple-500' },
+                { id: 'al', title: "Almoço", content: "Salmão 150g + grão 100g", subtitle: "Legumes: Couve Bruxelas", cals: 495, protein: 36, icon: 'activity', color: 'text-blue-500' },
+                { id: 'la', title: "Lanche", content: "Iogurte + Atum", cals: 105, protein: 15, icon: 'zap', color: 'text-purple-500' },
                 { id: 'ja', title: "Jantar", content: "Sopa + atum ou skyr", subtitle: "Dose: 350 ml", cals: 255, protein: 25, icon: 'chef-hat', color: 'text-emerald-500' }
             ]
         };
@@ -263,41 +257,50 @@
             { id: 14, cat: 'Legumes', prod: 'Brócolos', qty: '400 g', price: 2.34, status: 'Comprar', day: '2ª' },
             { id: 15, cat: 'Legumes', prod: 'Cenoura baby', qty: '750gr', price: 1.39, status: 'Comprar', day: '2ª' },
             { id: 17, cat: 'Legumes', prod: 'Espinafres em folha', qty: '750 g', price: 1.29, status: 'Comprar', day: '4ª' },
-            { id: 18, cat: 'Legumes', prod: 'Mistura Brócolos, Couve-flor e Cenoura', qty: '1Kg', price: 1.89, status: 'Comprar', day: '2ª' },
-            { id: 24, cat: 'Legumes', prod: 'Couve de Bruxelas', qty: '750gr', price: 1.29, status: 'Comprar', day: '2ª' },
+            { id: 18, cat: 'Legumes', prod: 'Mistura Vegetais', qty: '1Kg', price: 1.89, status: 'Comprar', day: '2ª' },
+            { id: 24, cat: 'Legumes', prod: 'Couve Bruxelas', qty: '750gr', price: 1.29, status: 'Comprar', day: '2ª' },
             { id: 20, cat: 'Legumes', prod: 'Cebola', qty: '~300 g', price: 0.56, status: 'Comprar', day: '2ª' },
             { id: 21, cat: 'Sopa', prod: 'Agrião (800gr)', qty: '1 un', price: 2.49, status: 'Comprar', day: '2ª' },
-            { id: 22, cat: 'Sopa', prod: 'Creme de Legumes (800gr)', qty: '1 un', price: 2.49, status: 'Comprar', day: '4ª' },
-            { id: 23, cat: 'Sopa', prod: 'Creme de Cenoura (800gr)', qty: '1 un', price: 2.49, status: 'Comprar', day: '5ª' },
+            { id: 22, cat: 'Sopa', prod: 'Creme Legumes', qty: '1 un', price: 2.49, status: 'Comprar', day: '4ª' },
+            { id: 23, cat: 'Sopa', prod: 'Creme Cenoura', qty: '1 un', price: 2.49, status: 'Comprar', day: '5ª' },
         ];
 
-        // --- FUNÇÕES DE INTERFACE ---
+        // --- FUNÇÕES DE LÓGICA ---
 
         function switchTab(tabId) {
             activeTab = tabId;
             document.querySelectorAll('.tab-view').forEach(view => view.classList.add('hidden'));
             document.getElementById(`view-${tabId}`).classList.remove('hidden');
             
-            // Atualizar botões
+            // Abas Desktop
             document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('bg-white', 'text-emerald-600', 'shadow-md');
+                btn.classList.remove('bg-white', 'text-emerald-600', 'shadow-sm', 'active-tab-glow');
                 btn.classList.add('text-slate-500');
             });
-            document.getElementById(`tab-${tabId}`).classList.add('bg-white', 'text-emerald-600', 'shadow-md');
-            document.getElementById(`tab-${tabId}`).classList.remove('text-slate-500');
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            activeBtn.classList.add('bg-white', 'text-emerald-600', 'shadow-sm', 'active-tab-glow');
+            activeBtn.classList.remove('text-slate-500');
 
-            // Nav Mobile
+            // Abas Mobile
             document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
                 btn.classList.remove('text-emerald-600', 'scale-110');
                 btn.classList.add('text-slate-400');
                 const inner = btn.querySelector('div');
-                inner.classList.remove('bg-emerald-500', 'text-white', 'shadow-lg', 'shadow-emerald-200');
+                inner.classList.remove('bg-emerald-500', 'text-white', 'shadow-lg', 'active-tab-glow');
+                const label = btn.querySelector('span');
+                label.classList.remove('text-emerald-600');
+                label.classList.add('text-slate-400');
             });
             const activeMobile = document.querySelector(`.mobile-tab-btn[data-tab="${tabId}"]`);
             activeMobile.classList.add('text-emerald-600', 'scale-110');
-            activeMobile.querySelector('div').classList.add('bg-emerald-500', 'text-white', 'shadow-lg', 'shadow-emerald-200');
+            const activeInner = activeMobile.querySelector('div');
+            activeInner.classList.add('bg-emerald-500', 'text-white', 'shadow-lg', 'active-tab-glow');
+            const activeLabel = activeMobile.querySelector('span');
+            activeLabel.classList.add('text-emerald-600');
+            activeLabel.classList.remove('text-slate-400');
 
             render();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function updateSelectedDay(day) {
@@ -322,18 +325,9 @@
         }
 
         function archiveWeek() {
-            let totalCals = 0;
-            let totalProt = 0;
-            let exercisesLog = [];
-            let burnedSum = 0;
-
+            let totalCals = 0; let totalProt = 0; let exercisesLog = []; let burnedSum = 0;
             daysList.forEach(day => {
-                mealData[day].forEach(item => {
-                    if (completedMeals[`${day}-${item.id}`]) {
-                        totalCals += item.cals;
-                        totalProt += item.protein;
-                    }
-                });
+                mealData[day].forEach(item => { if (completedMeals[`${day}-${item.id}`]) { totalCals += item.cals; totalProt += item.protein; } });
                 if (dailyExercise[day].cals > 0) {
                     burnedSum += dailyExercise[day].cals;
                     exercisesLog.push(`${day}: ${dailyExercise[day].name || 'Treino'} (${dailyExercise[day].cals} kcal)`);
@@ -349,25 +343,14 @@
                 totalBurned: burnedSum,
                 exercises: exercisesLog
             };
-
             history.unshift(newEntry);
-            completedMeals = {};
-            checkedItems = {};
+            completedMeals = {}; checkedItems = {};
             dailyExercise = { '2ª': { name: '', cals: 0 }, '3ª': { name: '', cals: 0 }, '4ª': { name: '', cals: 0 }, '5ª': { name: '', cals: 0 }, '6ª': { name: '', cals: 0 } };
             switchTab('history');
         }
 
-        function deleteHistory(id) {
-            history = history.filter(h => h.id !== id);
-            render();
-        }
-
-        function toggleHistoryDetails(id) {
-            expandedHistoryId = expandedHistoryId === id ? null : id;
-            render();
-        }
-
-        // --- CÁLCULOS ---
+        function deleteHistory(id) { history = history.filter(h => h.id !== id); render(); }
+        function toggleHistoryDetails(id) { expandedHistoryId = expandedHistoryId === id ? null : id; render(); }
 
         function calculateProgressValue() {
             const totalPossible = daysList.length * 4;
@@ -381,35 +364,21 @@
             const progress = calculateProgressValue();
             document.getElementById('weekly-progress-text').innerText = `${progress}%`;
             document.getElementById('weekly-progress-bar').style.width = `${progress}%`;
-            
-            if (progress > 0) {
-                document.getElementById('btn-archive').classList.remove('hidden');
-            } else {
-                document.getElementById('btn-archive').classList.add('hidden');
-            }
+            document.getElementById('btn-archive').classList.toggle('hidden', progress === 0);
 
-            const currentMeals = mealData[selectedDay];
-            const targetCals = currentMeals.reduce((acc, curr) => acc + curr.cals, 0);
-            const targetProt = currentMeals.reduce((acc, curr) => acc + curr.protein, 0);
+            const meals = mealData[selectedDay];
+            const targetCals = meals.reduce((acc, curr) => acc + curr.cals, 0);
+            const targetProt = meals.reduce((acc, curr) => acc + curr.protein, 0);
             const burned = dailyExercise[selectedDay].cals;
-
-            const consumed = currentMeals.reduce((acc, curr) => {
-                return completedMeals[`${selectedDay}-${curr.id}`] ? acc + curr.cals : acc;
-            }, 0);
-
-            const consumedProt = currentMeals.reduce((acc, curr) => {
-                return completedMeals[`${selectedDay}-${curr.id}`] ? acc + curr.protein : acc;
-            }, 0);
+            const consumed = meals.reduce((acc, curr) => completedMeals[`${selectedDay}-${curr.id}`] ? acc + curr.cals : acc, 0);
+            const consumedProt = meals.reduce((acc, curr) => completedMeals[`${selectedDay}-${curr.id}`] ? acc + curr.protein : acc, 0);
 
             document.getElementById('header-net-cals').innerText = targetCals - burned;
             document.getElementById('header-protein').innerText = targetProt;
-
             document.getElementById('consumed-cals-text').innerText = `${consumed} kcal`;
             document.getElementById('consumed-cals-bar').style.width = `${Math.min((consumed/targetCals)*100, 100)}%`;
-
             document.getElementById('burned-cals-text').innerText = `${burned} kcal`;
             document.getElementById('burned-cals-bar').style.width = `${Math.min((burned/1000)*100, 100)}%`;
-
             document.getElementById('protein-text').innerText = `${consumedProt}g / ${targetProt}g`;
             document.getElementById('protein-bar').style.width = `${Math.min((consumedProt/targetProt)*100, 100)}%`;
         }
@@ -417,7 +386,7 @@
         function renderDaySelector() {
             const container = document.getElementById('day-selector');
             container.innerHTML = daysList.map(day => `
-                <button onclick="updateSelectedDay('${day}')" class="px-8 py-3 rounded-2xl font-black text-sm whitespace-nowrap transition-all ${selectedDay === day ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-200 scale-105' : 'bg-white text-slate-400 border border-slate-200 hover:border-emerald-300'}">
+                <button onclick="updateSelectedDay('${day}')" class="px-7 py-2.5 rounded-xl font-black text-xs whitespace-nowrap transition-all border ${selectedDay === day ? 'bg-emerald-600 text-white border-emerald-600 shadow-md scale-105' : 'bg-white text-slate-400 border-slate-200'}">
                     ${day}
                 </button>
             `).join('');
@@ -426,16 +395,16 @@
         function renderExerciseCard() {
             const container = document.getElementById('exercise-card');
             container.innerHTML = `
-                <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-[2rem] p-6 shadow-xl shadow-blue-200/50 text-white relative overflow-hidden group mb-4">
-                    <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform"><i data-lucide="dumbbell" class="w-24 h-24"></i></div>
-                    <div class="flex flex-col sm:flex-row gap-4 relative z-10">
+                <div class="bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl p-4 sm:p-5 shadow-lg text-white relative overflow-hidden group mb-4">
+                    <div class="absolute top-0 right-0 p-4 opacity-10"><i data-lucide="dumbbell" class="w-16 h-16"></i></div>
+                    <div class="flex flex-col gap-3 relative z-10">
                         <div class="flex-1">
-                            <h4 class="text-[10px] font-black uppercase tracking-widest text-blue-100 mb-2">Atividade Física (Hoje)</h4>
-                            <input type="text" placeholder="Nome do exercício..." class="bg-white/10 border border-white/20 rounded-xl px-4 py-2 w-full text-white placeholder:text-blue-200 font-bold focus:outline-none focus:bg-white/20 transition-all" value="${dailyExercise[selectedDay].name}" oninput="handleExerciseInput('name', this.value)">
+                            <h4 class="text-[8px] font-black uppercase tracking-widest text-blue-100 mb-1">Exercício Hoje</h4>
+                            <input type="text" placeholder="O que treinaste?" class="bg-white/10 border border-white/20 rounded-lg px-3 py-2 w-full text-white placeholder:text-blue-200 font-bold focus:outline-none focus:bg-white/20" value="${dailyExercise[selectedDay].name}" oninput="handleExerciseInput('name', this.value)">
                         </div>
-                        <div class="w-full sm:w-32">
-                            <h4 class="text-[10px] font-black uppercase tracking-widest text-blue-100 mb-2">Gasto (kcal)</h4>
-                            <input type="number" placeholder="0" class="bg-white/10 border border-white/20 rounded-xl px-4 py-2 w-full text-white placeholder:text-blue-200 font-bold focus:outline-none focus:bg-white/20 transition-all text-center" value="${dailyExercise[selectedDay].cals || ''}" oninput="handleExerciseInput('cals', this.value)">
+                        <div class="flex flex-col w-full">
+                            <h4 class="text-[8px] font-black uppercase tracking-widest text-blue-100 mb-1">Queima (kcal)</h4>
+                            <input type="number" placeholder="0" class="bg-white/10 border border-white/20 rounded-lg px-3 py-2 w-full text-white placeholder:text-blue-200 font-bold focus:outline-none focus:bg-white/20 text-center" value="${dailyExercise[selectedDay].cals || ''}" oninput="handleExerciseInput('cals', this.value)">
                         </div>
                     </div>
                 </div>
@@ -445,26 +414,24 @@
 
         function renderMeals() {
             const container = document.getElementById('meal-cards-container');
-            const meals = mealData[selectedDay];
-            
-            container.innerHTML = meals.map(meal => {
+            container.innerHTML = mealData[selectedDay].map(meal => {
                 const isCompleted = completedMeals[`${selectedDay}-${meal.id}`];
                 return `
-                    <div onclick="toggleMeal('${meal.id}')" class="group bg-white rounded-[2rem] p-6 border transition-all cursor-pointer shadow-lg shadow-slate-200/40 active:scale-95 ${isCompleted ? 'border-transparent bg-slate-50' : 'border-white hover:border-emerald-200 shadow-sm'}">
-                        <div class="flex items-center gap-5">
-                            <div class="p-4 rounded-2xl transition-all ${isCompleted ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-50 text-slate-400 shadow-inner'}">
-                                <i data-lucide="${isCompleted ? 'check-circle-2' : meal.icon}" class="w-6 h-6"></i>
+                    <div onclick="toggleMeal('${meal.id}')" class="glass-card rounded-2xl p-4 border transition-all cursor-pointer shadow-sm active:scale-[0.98] ${isCompleted ? 'opacity-60 border-transparent bg-slate-50' : 'border-white'}">
+                        <div class="flex items-center gap-3 sm:gap-4">
+                            <div class="p-3 rounded-xl transition-all ${isCompleted ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-50 text-slate-400 shadow-inner'}">
+                                <i data-lucide="${isCompleted ? 'check-circle-2' : meal.icon}" class="w-5 h-5"></i>
                             </div>
-                            <div class="flex-1">
-                                <div class="flex justify-between items-center mb-1">
-                                    <h4 class="text-[10px] font-black uppercase tracking-widest ${isCompleted ? 'text-emerald-600/50' : 'text-slate-400'}">${meal.title}</h4>
-                                    <div class="flex items-center gap-2">
-                                        <div class="flex items-center gap-1 bg-orange-50 px-2 py-0.5 rounded-full border border-orange-100 font-black text-[9px] text-orange-600"><i data-lucide="flame" class="w-3 h-3"></i> ${meal.cals} kcal</div>
-                                        <div class="flex items-center gap-1 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100 font-black text-[9px] text-blue-600"><i data-lucide="dna" class="w-3 h-3"></i> ${meal.protein}g P</div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex justify-between items-start mb-0.5">
+                                    <h4 class="text-[8px] font-black uppercase tracking-widest truncate ${isCompleted ? 'text-emerald-600/50' : 'text-slate-400'}">${meal.title}</h4>
+                                    <div class="flex items-center gap-1">
+                                        <span class="flex items-center gap-0.5 bg-orange-50 px-1.5 py-0.5 rounded-md text-[8px] font-black text-orange-600"><i data-lucide="flame" class="w-2.5 h-2.5"></i> ${meal.cals}</span>
+                                        <span class="flex items-center gap-0.5 bg-blue-50 px-1.5 py-0.5 rounded-md text-[8px] font-black text-blue-600"><i data-lucide="dna" class="w-2.5 h-2.5"></i> ${meal.protein}g</span>
                                     </div>
                                 </div>
-                                <p class="text-lg font-black tracking-tight leading-tight ${isCompleted ? 'text-slate-400 line-through italic' : 'text-slate-900'}">${meal.content}</p>
-                                ${meal.subtitle ? `<div class="text-xs mt-2 flex items-center gap-1.5 font-bold text-emerald-600/70"><i data-lucide="info" class="w-3 h-3"></i> ${meal.subtitle}</div>` : ''}
+                                <p class="text-sm font-black text-slate-900 leading-tight ${isCompleted ? 'line-through italic text-slate-400' : ''}">${meal.content}</p>
+                                ${meal.subtitle ? `<p class="text-[10px] mt-1 text-emerald-600/70 font-semibold truncate"><i data-lucide="info" class="w-2.5 h-2.5 inline mr-0.5"></i> ${meal.subtitle}</p>` : ''}
                             </div>
                         </div>
                     </div>
@@ -475,44 +442,35 @@
 
         function renderShopping() {
             const container = document.getElementById('shopping-container');
-            const categories = ['Proteína', 'Hidratos', 'Legumes', 'Sopa'];
+            const total = shoppingList.length;
+            const bought = shoppingList.filter(i => checkedItems[i.id]).length;
+            document.getElementById('shopping-summary').innerText = `${bought} de ${total} itens adquiridos`;
             
-            const totalItems = shoppingList.length;
-            const bought = shoppingList.filter(item => checkedItems[item.id]).length;
-            document.getElementById('shopping-summary').innerText = `${bought} de ${totalItems} itens no carrinho`;
-            
-            // Badge mobile
             const badge = document.getElementById('shopping-badge');
-            if (totalItems - bought > 0) {
-                badge.innerText = totalItems - bought;
-                badge.classList.remove('hidden');
-            } else {
-                badge.classList.add('hidden');
-            }
+            badge.innerText = total - bought;
+            badge.classList.toggle('hidden', total - bought === 0);
 
-            container.innerHTML = categories.map(cat => {
+            container.innerHTML = ['Proteína', 'Hidratos', 'Legumes', 'Sopa'].map(cat => {
                 const items = shoppingList.filter(i => i.cat === cat);
-                const catBought = items.filter(i => checkedItems[i.id]).length;
                 return `
-                    <div class="bg-white rounded-3xl p-6 shadow-lg shadow-slate-200/50 border border-slate-100">
-                        <h3 class="font-black text-slate-800 mb-5 text-xs uppercase tracking-widest border-l-4 border-emerald-500 pl-3 flex justify-between">
-                            ${cat}
-                            <span class="text-[10px] text-slate-400 font-mono font-normal">${catBought}/${items.length}</span>
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+                        <h3 class="font-black text-slate-800 mb-3 text-[10px] uppercase tracking-widest border-l-4 border-emerald-500 pl-2 flex justify-between">
+                            ${cat} <span class="text-slate-300 font-normal">${items.filter(i => checkedItems[i.id]).length}/${items.length}</span>
                         </h3>
-                        <ul class="space-y-3">
+                        <ul class="space-y-2">
                             ${items.map(item => {
                                 const isEx = item.status !== 'Comprar' || item.day !== '2ª';
-                                const isCheck = checkedItems[item.id];
+                                const check = checkedItems[item.id];
                                 return `
-                                    <li onclick="toggleShopping(${item.id})" class="flex justify-between items-center cursor-pointer p-3 rounded-2xl border transition-all ${isCheck ? 'bg-slate-50 border-transparent opacity-40' : isEx ? 'bg-amber-50/50 border-amber-100' : 'bg-white border-slate-100 shadow-sm'}">
-                                        <div class="flex items-center gap-3">
-                                            <i data-lucide="${isCheck ? 'check-square' : 'square'}" class="w-5 h-5 ${isCheck ? 'text-emerald-500' : 'text-slate-200'}"></i>
-                                            <div class="flex flex-col text-sm font-bold">
-                                                <span>${item.prod}</span>
-                                                <span class="text-[10px] text-slate-400 font-normal">${item.qty} • ${item.day}</span>
+                                    <li onclick="toggleShopping(${item.id})" class="flex justify-between items-center p-2.5 rounded-xl border transition-all ${check ? 'bg-slate-50 opacity-40 grayscale border-transparent' : isEx ? 'bg-amber-50/50 border-amber-100' : 'bg-white border-slate-100'}">
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="${check ? 'check-square' : 'square'}" class="w-4 h-4 ${check ? 'text-emerald-500' : 'text-slate-300'}"></i>
+                                            <div class="flex flex-col min-w-0">
+                                                <span class="text-xs font-bold truncate">${item.prod}</span>
+                                                <span class="text-[9px] text-slate-400">${item.qty} • ${item.day}</span>
                                             </div>
                                         </div>
-                                        <span class="text-xs font-black">${item.price.toFixed(2)}€</span>
+                                        <span class="text-[10px] font-black whitespace-nowrap ml-2">${item.price.toFixed(2)}€</span>
                                     </li>
                                 `;
                             }).join('')}
@@ -526,47 +484,32 @@
         function renderHistory() {
             const container = document.getElementById('history-container');
             if (history.length === 0) {
-                container.innerHTML = `
-                    <div class="bg-white rounded-[2rem] p-12 text-center border border-slate-100">
-                        <i data-lucide="archive" class="w-12 h-12 text-slate-200 mx-auto mb-4"></i>
-                        <p class="text-slate-400 font-bold uppercase tracking-widest text-xs">Ainda não tens semanas arquivadas</p>
-                    </div>
-                `;
+                container.innerHTML = `<div class="p-10 text-center opacity-40 font-black uppercase text-[10px] tracking-widest">Vazio</div>`;
             } else {
                 container.innerHTML = history.map(entry => `
-                    <div class="bg-white rounded-[2rem] p-6 shadow-lg shadow-slate-200/40 border border-white transition-all overflow-hidden">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                            <div class="flex-1">
-                                <h3 class="text-sm font-black text-slate-800 uppercase tracking-tight">${entry.date}</h3>
-                                <div class="flex flex-wrap items-center gap-2 mt-3">
-                                    <div class="flex items-center gap-1 text-[10px] font-bold text-orange-600 bg-orange-50 px-2 py-1 rounded-lg"><i data-lucide="flame" class="w-3 h-3"></i> ~${entry.avgCals} kcal/dia</div>
-                                    <div class="flex items-center gap-1 text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-lg"><i data-lucide="dna" class="w-3 h-3"></i> ~${entry.avgProtein}g P/dia</div>
-                                    <div class="flex items-center gap-1 text-[10px] font-bold text-blue-800 bg-blue-100 px-2 py-1 rounded-lg"><i data-lucide="dumbbell" class="w-3 h-3"></i> ${entry.totalBurned} kcal queimadas</div>
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 overflow-hidden">
+                        <div class="flex justify-between items-center">
+                            <div class="min-w-0 flex-1">
+                                <h3 class="text-xs font-black text-slate-800 truncate">${entry.date}</h3>
+                                <div class="flex gap-1.5 mt-2 overflow-x-auto no-scrollbar">
+                                    <span class="bg-orange-50 text-orange-600 px-1.5 py-0.5 rounded text-[8px] font-bold whitespace-nowrap">~${entry.avgCals} kcal</span>
+                                    <span class="bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded text-[8px] font-bold whitespace-nowrap">~${entry.avgProtein}g P</span>
+                                    <span class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded text-[8px] font-bold whitespace-nowrap">${entry.totalBurned} kcal🔥</span>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-4">
+                            <div class="flex items-center gap-3 ml-4">
                                 <div class="text-right">
-                                    <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Taxa Conclusão</div>
-                                    <div class="text-xl font-black ${entry.completion > 80 ? 'text-emerald-600' : 'text-amber-500'}">${entry.completion}%</div>
+                                    <div class="text-[8px] text-slate-400 font-black uppercase tracking-widest">Meta</div>
+                                    <div class="text-base font-black ${entry.completion > 80 ? 'text-emerald-600' : 'text-amber-500'}">${entry.completion}%</div>
                                 </div>
-                                <button onclick="toggleHistoryDetails(${entry.id})" class="p-2 bg-slate-50 rounded-xl text-slate-400 hover:text-slate-900 transition-colors">
-                                    <i data-lucide="${expandedHistoryId === entry.id ? 'chevron-up' : 'chevron-down'}" class="w-5 h-5"></i>
-                                </button>
-                                <button onclick="deleteHistory(${entry.id})" class="p-2 text-slate-300 hover:text-red-500 transition-all">
-                                    <i data-lucide="trash-2" class="w-5 h-5"></i>
-                                </button>
+                                <button onclick="toggleHistoryDetails(${entry.id})" class="p-2 bg-slate-50 rounded-lg text-slate-400"><i data-lucide="${expandedHistoryId === entry.id ? 'chevron-up' : 'chevron-down'}" class="w-4 h-4"></i></button>
                             </div>
                         </div>
-                        
                         ${expandedHistoryId === entry.id ? `
-                            <div class="mt-6 pt-6 border-t border-slate-100 animate-in slide-in-from-top-2 duration-300">
-                                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Atividades da Semana</h4>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                    ${entry.exercises.length > 0 ? entry.exercises.map(ex => `
-                                        <div class="flex items-center gap-2 p-2 bg-slate-50 rounded-xl border border-slate-100 text-xs font-bold text-slate-600 italic">
-                                            <i data-lucide="dumbbell" class="w-3 h-3 text-blue-500"></i> ${ex}
-                                        </div>
-                                    `).join('') : '<p class="text-xs text-slate-300 italic">Sem registos.</p>'}
+                            <div class="mt-4 pt-4 border-t border-slate-50">
+                                <h4 class="text-[8px] font-black text-slate-300 uppercase tracking-widest mb-2">Treinos</h4>
+                                <div class="space-y-1.5">
+                                    ${entry.exercises.map(ex => `<div class="text-[10px] font-bold text-slate-500 italic flex items-center gap-1.5"><i data-lucide="dumbbell" class="w-3 h-3 text-blue-400"></i> ${ex}</div>`).join('')}
                                 </div>
                             </div>
                         ` : ''}
@@ -578,22 +521,12 @@
 
         function render() {
             updateDashboard();
-            if (activeTab === 'meals') {
-                renderDaySelector();
-                renderExerciseCard();
-                renderMeals();
-            } else if (activeTab === 'shopping') {
-                renderShopping();
-            } else if (activeTab === 'history') {
-                renderHistory();
-            }
+            if (activeTab === 'meals') { renderDaySelector(); renderExerciseCard(); renderMeals(); }
+            else if (activeTab === 'shopping') renderShopping();
+            else if (activeTab === 'history') renderHistory();
         }
 
-        // --- INICIALIZAÇÃO ---
-        window.onload = () => {
-            render();
-            lucide.createIcons();
-        };
+        window.onload = () => { render(); lucide.createIcons(); };
     </script>
 </body>
 </html>
