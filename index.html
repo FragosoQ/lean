@@ -1,627 +1,1255 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NutriCore - Dashboard de Performance</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
-        
-        :root {
-            --safe-area-bottom: env(safe-area-inset-bottom, 0px);
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>NutriCore - Performance Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-            -webkit-tap-highlight-color: transparent;
-            font-size: 16px;
-        }
+    :root { --safe-area-bottom: env(safe-area-inset-bottom, 0px); }
 
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    body{
+      font-family:'Inter',sans-serif;
+      background-color:#f8fafc;
+      -webkit-tap-highlight-color:transparent;
+      font-size:16px;
+    }
 
-        .active-tab {
-            color: #10b981;
-            position: relative;
-        }
-        
-        .active-tab::after {
-            content: '';
-            position: absolute;
-            bottom: -6px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 5px;
-            height: 5px;
-            background: #10b981;
-            border-radius: 50%;
-        }
+    .no-scrollbar::-webkit-scrollbar{ display:none; }
+    .no-scrollbar{ -ms-overflow-style:none; scrollbar-width:none; }
 
-        input { font-size: 16px !important; }
+    .active-tab{ color:#10b981; position:relative; }
+    .active-tab::after{
+      content:'';
+      position:absolute;
+      bottom:-6px;
+      left:50%;
+      transform:translateX(-50%);
+      width:5px; height:5px;
+      background:#10b981;
+      border-radius:50%;
+    }
 
-        /* Estilos para Impressão / Exportação PDF */
-        @media print {
-            .no-print { display: none !important; }
-            body { background: white; padding: 0; }
-            .print-only { display: block !important; }
-            .card-report { break-inside: avoid; border: 1px solid #e2e8f0 !important; box-shadow: none !important; }
-            header { position: static !important; border-bottom: 2px solid #10b981; }
-        }
-    </style>
+    input{ font-size:16px !important; }
+
+    @media print{
+      .no-print{ display:none !important; }
+      body{ background:white !important; padding:0 !important; }
+      .card-report{
+        break-inside:avoid;
+        border:1px solid #e2e8f0 !important;
+        box-shadow:none !important;
+        margin-bottom:30px !important;
+        padding:20px !important;
+      }
+      .print-header{
+        display:block !important;
+        border-bottom:2px solid #10b981;
+        margin-bottom:20px;
+      }
+      main{ max-width:100% !important; padding:0 !important; }
+      .bg-emerald-500{ background-color:#10b981 !important; -webkit-print-color-adjust:exact; }
+      .text-emerald-600{ color:#059669 !important; }
+      .kpi-card{ border:1px solid #e2e8f0 !important; }
+      .print-avoid-break{ break-inside:avoid; }
+    }
+
+    .card-shadow{
+      box-shadow:0 10px 25px -5px rgba(0,0,0,0.05),0 8px 10px -6px rgba(0,0,0,0.05);
+    }
+  </style>
 </head>
+
 <body class="text-slate-900 pb-32">
 
-    <!-- Cabeçalho Fixo -->
-    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 px-4 py-4 no-print">
-        <div class="max-w-md mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="bg-emerald-500 p-2 rounded-xl shadow-sm">
-                    <i data-lucide="zap" class="w-5 h-5 text-white fill-white"></i>
-                </div>
-                <h1 class="font-extrabold text-xl tracking-tight uppercase italic">Nutri<span class="text-emerald-600">Core</span></h1>
-            </div>
-            <div class="flex gap-2">
-                <div class="bg-orange-50 text-orange-600 px-3 py-1.5 rounded-xl border border-orange-100 flex items-center gap-1.5 text-xs font-bold">
-                    <i data-lucide="flame" class="w-3.5 h-3.5"></i> <span id="header-net-cals">0</span>
-                </div>
-                <div class="bg-blue-50 text-blue-600 px-3 py-1.5 rounded-xl border border-blue-100 flex items-center gap-1.5 text-xs font-bold">
-                    <i data-lucide="dna" class="w-3.5 h-3.5"></i> <span id="header-protein">0</span>g
-                </div>
-            </div>
-        </div>
-    </header>
+  <!-- Cabeçalho de Impressão -->
+  <div class="hidden print-header p-6 text-center">
+    <h1 class="text-2xl font-black uppercase tracking-tighter">Relatório Nutri<span class="text-emerald-600">Core</span></h1>
+    <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">Análise Consolidada de Performance</p>
+  </div>
 
-    <main class="max-w-md mx-auto">
-        
-        <!-- Painel de Controlo Diário (Comum ao Plano) -->
-        <section id="daily-dashboard" class="p-0 sm:p-4 space-y-px sm:space-y-4 no-print">
-            <!-- Progresso Semanal -->
-            <div class="bg-white p-6 sm:rounded-2xl shadow-sm border-b sm:border border-slate-100">
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Objetivo Semanal</span>
-                    <span id="weekly-progress-text" class="text-base font-extrabold text-emerald-600">0%</span>
+  <!-- Cabeçalho Fixo UI -->
+  <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 px-4 py-4 no-print">
+    <div class="max-w-md mx-auto flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="bg-emerald-500 p-2 rounded-xl shadow-sm">
+          <i data-lucide="zap" class="w-5 h-5 text-white fill-white"></i>
+        </div>
+        <h1 class="font-extrabold text-xl tracking-tight uppercase italic">Nutri<span class="text-emerald-600">Core</span></h1>
+      </div>
+      <div class="flex gap-2">
+        <div class="bg-orange-50 text-orange-600 px-3 py-1.5 rounded-xl border border-orange-100 flex items-center gap-1.5 text-xs font-bold">
+          <i data-lucide="flame" class="w-3.5 h-3.5"></i> <span id="header-net-cals">0</span>
+        </div>
+        <div class="bg-blue-50 text-blue-600 px-3 py-1.5 rounded-xl border border-blue-100 flex items-center gap-1.5 text-xs font-bold">
+          <i data-lucide="dna" class="w-3.5 h-3.5"></i> <span id="header-protein">0</span>g
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-md mx-auto">
+
+    <!-- Dashboard Diário (Plano) -->
+    <section id="daily-dashboard" class="p-0 sm:p-4 space-y-px sm:space-y-4 no-print">
+      <div class="bg-white p-6 sm:rounded-2xl shadow-sm border-b sm:border border-slate-100">
+        <div class="flex justify-between items-center mb-3">
+          <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Objetivo Semanal</span>
+          <span id="weekly-progress-text" class="text-base font-extrabold text-emerald-600">0%</span>
+        </div>
+        <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+          <div id="weekly-progress-bar" class="bg-emerald-500 h-full w-0 transition-all duration-1000"></div>
+        </div>
+        <button onclick="archiveWeek()" id="btn-archive" class="hidden w-full mt-5 py-4 bg-slate-900 text-white rounded-2xl text-xs font-black uppercase tracking-[0.2em] shadow-lg">
+          Finalizar e Arquivar Semana
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-px sm:gap-4">
+        <div class="bg-white p-5 sm:rounded-2xl border-b sm:border border-slate-100 flex justify-between items-center">
+          <div class="flex items-center gap-3">
+            <div class="bg-orange-100 p-2 rounded-lg text-orange-600"><i data-lucide="plus" class="w-4 h-4"></i></div>
+            <div>
+              <div class="text-[10px] font-bold uppercase text-slate-400">Hoje</div>
+              <div id="consumed-cals-text" class="text-lg font-bold">0 kcal</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 sm:rounded-2xl border-b sm:border border-slate-100 flex justify-between items-center">
+          <div class="flex items-center gap-3">
+            <div class="bg-blue-100 p-2 rounded-lg text-blue-600"><i data-lucide="minus" class="w-4 h-4"></i></div>
+            <div>
+              <div class="text-[10px] font-bold uppercase text-slate-400">Exercício</div>
+              <div id="burned-cals-text" class="text-lg font-bold">0 kcal</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 sm:rounded-2xl border-b sm:border border-slate-100 flex justify-between items-center col-span-1 sm:col-span-2">
+          <div class="flex items-center gap-3">
+            <div class="bg-emerald-100 p-2 rounded-lg text-emerald-600"><i data-lucide="dna" class="w-4 h-4"></i></div>
+            <div>
+              <div class="text-[10px] font-bold uppercase text-slate-400">Proteína Acumulada</div>
+              <div id="protein-text" class="text-lg font-bold">0g</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navegador de Dias -->
+    <div id="day-nav" class="sticky top-[73px] z-40 bg-white/70 backdrop-blur-md border-b border-slate-200 flex gap-2 p-3 overflow-x-auto no-scrollbar no-print"></div>
+
+    <!-- Vista: PLANO -->
+    <div id="view-meals" class="space-y-px sm:space-y-4 no-print">
+      <div id="exercise-section" class="p-4 space-y-4">
+        <div class="flex items-center justify-between px-1">
+          <h3 class="text-xs font-black uppercase tracking-widest text-slate-400 italic flex items-center gap-2">
+            <i data-lucide="flame" class="w-3.5 h-3.5 text-blue-500"></i> Gasto Ativo
+          </h3>
+          <button onclick="toggleExerciseForm()" class="bg-blue-600 text-white p-1.5 rounded-lg shadow-sm active:scale-90 transition-transform">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <div id="exercise-form" class="hidden bg-white p-5 rounded-2xl border border-blue-100 shadow-sm space-y-3">
+          <input id="exer-name" type="text" placeholder="Atividade (ex: Ginásio)..." class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm outline-none">
+          <div class="grid grid-cols-2 gap-2">
+            <input id="exer-cals" type="number" placeholder="kcal" class="bg-slate-50 border border-slate-100 rounded-xl py-3 text-sm text-center outline-none">
+            <button onclick="addExerciseEntry()" class="bg-blue-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest">Registar</button>
+          </div>
+        </div>
+
+        <div id="exercise-list" class="space-y-2"></div>
+      </div>
+
+      <div id="meal-cards" class="space-y-px sm:space-y-3"></div>
+
+      <div class="p-4 space-y-4">
+        <div class="flex items-center justify-between px-1">
+          <h3 class="text-xs font-black uppercase tracking-widest text-slate-400 italic flex items-center gap-2">
+            <i data-lucide="utensils" class="w-3.5 h-3.5 text-emerald-500"></i> Extras não previstos
+          </h3>
+          <button onclick="toggleExtraForm()" class="bg-emerald-500 text-white p-1.5 rounded-lg shadow-sm active:scale-90 transition-transform">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <div id="extra-meal-form" class="hidden bg-white p-5 rounded-2xl border border-emerald-100 shadow-sm space-y-3">
+          <input id="ex-name" type="text" placeholder="Alimento..." class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm outline-none">
+          <input id="ex-qty" type="text" placeholder="Qtd..." class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm outline-none">
+          <div class="grid grid-cols-3 gap-2">
+            <input id="ex-cals" type="number" placeholder="kcal" class="bg-slate-50 border border-slate-100 rounded-xl py-3 text-sm text-center outline-none">
+            <input id="ex-prot" type="number" placeholder="Prot.g" class="bg-slate-50 border border-slate-100 rounded-xl py-3 text-sm text-center outline-none">
+            <input id="ex-time" type="text" placeholder="Hora" class="bg-slate-50 border border-slate-100 rounded-xl py-3 text-sm text-center outline-none">
+          </div>
+          <button onclick="addExtraMeal()" class="w-full py-3 bg-emerald-600 text-white rounded-xl text-sm font-bold uppercase tracking-widest">Adicionar</button>
+        </div>
+
+        <div id="extra-meals-list" class="space-y-2"></div>
+      </div>
+
+      <div class="p-6">
+        <button onclick="resetMeals()" class="w-full py-4 border-2 border-dashed border-slate-200 text-slate-400 rounded-2xl text-xs font-bold uppercase flex items-center justify-center gap-3">
+          <i data-lucide="refresh-cw" class="w-4 h-4"></i> Reset Plano
+        </button>
+      </div>
+    </div>
+
+    <!-- Vista: COMPRAS -->
+    <div id="view-shopping" class="hidden space-y-6 no-print">
+      <div class="bg-emerald-600 p-8 text-white text-center">
+        <h3 class="font-bold text-2xl flex items-center justify-center gap-3 mb-2"><i data-lucide="shopping-cart" class="w-6 h-6"></i> Compras</h3>
+        <p id="shopping-summary" class="text-xs opacity-90 uppercase font-black">A carregar...</p>
+      </div>
+
+      <div id="shopping-list-content" class="p-4 space-y-8"></div>
+
+      <div class="p-6">
+        <button onclick="resetShopping()" class="w-full py-4 border-2 border-dashed border-slate-200 text-slate-400 rounded-2xl text-xs font-bold uppercase flex items-center justify-center gap-3">
+          <i data-lucide="refresh-cw" class="w-4 h-4"></i> Limpar Lista
+        </button>
+      </div>
+    </div>
+
+    <!-- Vista: REGISTO / DASHBOARD ANALÍTICO -->
+    <div id="view-history" class="hidden p-4 space-y-8 pb-12">
+
+      <div class="flex justify-between items-center no-print px-1">
+        <div>
+          <h2 class="font-black text-slate-800 text-xl tracking-tight">Registo</h2>
+          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Semana atual + histórico arquivado</p>
+        </div>
+        <button onclick="window.print()" class="text-emerald-600 flex items-center gap-2 text-xs font-black bg-emerald-50 px-4 py-2.5 rounded-2xl border border-emerald-100 active:scale-95 transition-all">
+          <i data-lucide="file-down" class="w-4 h-4"></i> Exportar PDF
+        </button>
+      </div>
+
+      <!-- Semana atual (em curso) -->
+      <div id="current-week-card" class="bg-white p-7 rounded-[2.5rem] border border-slate-100 card-shadow print-avoid-break card-report">
+        <!-- JS -->
+      </div>
+
+      <!-- KPIs Globais Consolidados (histórico) -->
+      <div id="history-summary-kpis" class="grid grid-cols-2 gap-3 no-print"></div>
+
+      <!-- Mini gráfico (histórico) -->
+      <div id="history-trend" class="bg-white rounded-[2.5rem] border border-slate-100 card-shadow p-6 no-print print-avoid-break">
+        <!-- JS -->
+      </div>
+
+      <!-- Lista de Semanas Arquivadas -->
+      <div id="history-dashboard-container" class="space-y-8">
+        <!-- JS -->
+      </div>
+
+      <div class="no-print pt-8">
+        <button onclick="resetHistory()" class="w-full py-4 bg-red-50 text-red-500 border border-red-100 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-3 active:bg-red-100">
+          <i data-lucide="trash-2" class="w-4 h-4"></i> Apagar Tudo
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Barra de Navegação -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-50 no-print">
+    <div class="max-w-md mx-auto flex justify-around items-center pt-4 pb-8 px-4">
+      <button onclick="switchTab('meals')" class="flex flex-col items-center gap-1.5 active-tab transition-all" id="nav-meals">
+        <i data-lucide="calendar" class="w-6 h-6"></i>
+        <span class="text-[10px] font-bold uppercase tracking-widest">Plano</span>
+      </button>
+
+      <button onclick="switchTab('shopping')" class="flex flex-col items-center gap-1.5 text-slate-400 transition-all" id="nav-shopping">
+        <div class="relative">
+          <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+          <span id="shopping-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center font-black hidden border-2 border-white">0</span>
+        </div>
+        <span class="text-[10px] font-bold uppercase tracking-widest">Compras</span>
+      </button>
+
+      <button onclick="switchTab('history')" class="flex flex-col items-center gap-1.5 text-slate-400 transition-all" id="nav-history">
+        <i data-lucide="bar-chart-2" class="w-6 h-6"></i>
+        <span class="text-[10px] font-bold uppercase tracking-widest">Registo</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Firebase + App (module) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      serverTimestamp,
+      query,
+      orderBy,
+      limit,
+      getDocs,
+      deleteDoc,
+      doc
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    // --- Firebase config (do utilizador) ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyDzgafQRqc0Vif3PsT98lYxBImos7K-BNY",
+      authDomain: "nutricore-9c1b6.firebaseapp.com",
+      projectId: "nutricore-9c1b6",
+      storageBucket: "nutricore-9c1b6.firebasestorage.app",
+      messagingSenderId: "221410669125",
+      appId: "1:221410669125:web:4e75239628588de48b292c"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const APP_VERSION = "v1";
+    let UID = null;
+
+    // --------------------------
+    // PERSISTÊNCIA local (cache)
+    // --------------------------
+    const STORAGE_KEY = 'nutricore_state_v1';
+
+    function saveState() {
+      const payload = { completedMeals, checkedItems, extraMeals, dailyExercise, historyEntries, selectedDay };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+
+        completedMeals = data.completedMeals || {};
+        checkedItems = data.checkedItems || {};
+        extraMeals = data.extraMeals || { '2ª': [], '3ª': [], '4ª': [], '5ª': [], '6ª': [] };
+        dailyExercise = data.dailyExercise || { '2ª': [], '3ª': [], '4ª': [], '5ª': [], '6ª': [] };
+        historyEntries = data.historyEntries || [];
+        selectedDay = data.selectedDay || selectedDay;
+      } catch(e) {}
+    }
+
+    // --------------------------
+    // Firebase: logging / snapshot
+    // --------------------------
+    async function logEvent(eventType, day = "", refId = "", payload = {}) {
+      try {
+        if (!UID) return;
+        await addDoc(collection(db, "users", UID, "events"), {
+          ts: serverTimestamp(),
+          eventType,
+          day,
+          refId,
+          payload,
+          appVersion: APP_VERSION,
+          source: "web"
+        });
+      } catch (e) {
+        console.warn("logEvent falhou", e);
+      }
+    }
+
+    async function saveWeekSnapshot(snapshot) {
+      try {
+        if (!UID) return;
+        await addDoc(collection(db, "users", UID, "weeks"), {
+          ts: serverTimestamp(),
+          dateLabel: `Semana de ${new Date().toLocaleDateString('pt-PT')}`,
+          snapshot,
+          appVersion: APP_VERSION
+        });
+      } catch (e) {
+        console.warn("saveWeekSnapshot falhou", e);
+      }
+    }
+
+    // (Opcional) carregar últimas semanas arquivadas do Firestore (para sincronizar multi-dispositivo)
+    async function loadWeeksFromFirestore(max = 25) {
+      try {
+        if (!UID) return;
+        const q = query(collection(db, "users", UID, "weeks"), orderBy("ts", "desc"), limit(max));
+        const snap = await getDocs(q);
+        const items = [];
+        snap.forEach(d => {
+          const data = d.data();
+          const s = data.snapshot || {};
+          // converte para o formato interno do histórico
+          items.push({
+            id: d.id,
+            date: data.dateLabel || "Semana",
+            planProgress: s.planProgress ?? 0,
+            shopProgress: s.shopProgress ?? 0,
+            avgCals: s.averages?.avgCals ?? s.avgCals ?? 0,
+            avgProt: s.averages?.avgProt ?? s.avgProt ?? 0,
+            burned: s.exercise?.burned ?? s.burned ?? 0,
+            status: s.status ?? "—",
+            details: s.details ?? {},
+            extras: s.extras ?? {},
+            totals: s.totals ?? {},
+            shopping: s.shopping ?? {},
+            exercise: s.exercise ?? {}
+          });
+        });
+
+        // substitui histórico local por versão da cloud
+        historyEntries = items;
+        saveState();
+      } catch (e) {
+        console.warn("loadWeeksFromFirestore falhou", e);
+      }
+    }
+
+    // (Opcional) limpar semanas na cloud quando apagares histórico
+    async function deleteAllWeeksFromFirestore(max = 200) {
+      try {
+        if (!UID) return;
+        const q = query(collection(db, "users", UID, "weeks"), orderBy("ts", "desc"), limit(max));
+        const snap = await getDocs(q);
+        const dels = [];
+        snap.forEach(d => dels.push(deleteDoc(doc(db, "users", UID, "weeks", d.id))));
+        await Promise.all(dels);
+      } catch(e) {
+        console.warn("deleteAllWeeksFromFirestore falhou", e);
+      }
+    }
+
+    // --------------------------
+    // APP STATE
+    // --------------------------
+    let activeTab = 'meals';
+    let selectedDay = '2ª';
+    let completedMeals = {};
+    let checkedItems = {};
+    let extraMeals = { '2ª': [], '3ª': [], '4ª': [], '5ª': [], '6ª': [] };
+    let dailyExercise = { '2ª': [], '3ª': [], '4ª': [], '5ª': [], '6ª': [] };
+    let historyEntries = []; // sem exemplos
+
+    const daysList = ['2ª', '3ª', '4ª', '5ª', '6ª'];
+
+    const mealData = {
+      '2ª': [
+        { id: 'pq', title: "Pequeno-Almoço", content: "2 ovos + 1 banana", cals: 245, protein: 14, icon: 'clock' },
+        { id: 'al', title: "Almoço", content: "Frango 150g + arroz 75g", cals: 465, protein: 42, icon: 'activity' },
+        { id: 'la', title: "Lanche", content: "Skyr (170g)", cals: 110, protein: 18, icon: 'zap' },
+        { id: 'ja', title: "Jantar", content: "Sopa + iogurte + whey", cals: 320, protein: 28, icon: 'chef-hat' }
+      ],
+      '3ª': [
+        { id: 'pq', title: "Pequeno-Almoço", content: "2 ovos + 1 banana", cals: 245, protein: 14, icon: 'clock' },
+        { id: 'al', title: "Almoço", content: "Frango 150g + grão 100g", cals: 365, protein: 40, icon: 'activity' },
+        { id: 'la', title: "Lanche", content: "Atum (1 lata)", cals: 85, protein: 22, icon: 'zap' },
+        { id: 'ja', title: "Jantar", content: "Sopa + omelete", cals: 315, protein: 18, icon: 'chef-hat' }
+      ],
+      '4ª': [
+        { id: 'pq', title: "Pequeno-Almoço", content: "2 ovos + 1 banana", cals: 245, protein: 14, icon: 'clock' },
+        { id: 'al', title: "Almoço", content: "Salmão 150g + arroz 60g", cals: 535, protein: 35, icon: 'activity' },
+        { id: 'la', title: "Lanche", content: "Iogurte proteico", cals: 95, protein: 20, icon: 'zap' },
+        { id: 'ja', title: "Jantar", content: "Sopa + skyr", cals: 260, protein: 20, icon: 'chef-hat' }
+      ],
+      '5ª': [
+        { id: 'pq', title: "Pequeno-Almoço", content: "2 ovos + 1 banana", cals: 245, protein: 14, icon: 'clock' },
+        { id: 'al', title: "Almoço", content: "Frango 150g + batata 250g", cals: 410, protein: 38, icon: 'activity' },
+        { id: 'la', title: "Lanche", content: "Skyr (170g)", cals: 110, protein: 18, icon: 'zap' },
+        { id: 'ja', title: "Jantar", content: "Sopa + iogurte + whey", cals: 320, protein: 28, icon: 'chef-hat' }
+      ],
+      '6ª': [
+        { id: 'pq', title: "Pequeno-Almoço", content: "2 ovos + 1 banana", cals: 245, protein: 14, icon: 'clock' },
+        { id: 'al', title: "Almoço", content: "Salmão 150g + grão 100g", cals: 495, protein: 36, icon: 'activity' },
+        { id: 'la', title: "Lanche", content: "Iogurte + Atum", cals: 105, protein: 15, icon: 'zap' },
+        { id: 'ja', title: "Jantar", content: "Sopa + atum ou skyr", cals: 255, protein: 25, icon: 'chef-hat' }
+      ]
+    };
+
+    const shoppingData = [
+      { id: 1, cat: 'Proteína', prod: 'Ovos (12 un)', qty: '12 un', price: 3.09, status: 'Comprar', day: '2ª' },
+      { id: 2, cat: 'Proteína', prod: 'Peru (bifes/perna)', qty: '300 g', price: 2.10, status: 'Comprar', day: '2ª' },
+      { id: 3, cat: 'Proteína', prod: 'Frango (peito)', qty: '600 g', price: 1.98, status: 'Comprar', day: '2ª' },
+      { id: 4, cat: 'Proteína', prod: 'Salmão (lombos/postas)', qty: '400 g', price: 4.00, status: 'Comprar', day: '2ª' },
+      { id: 5, cat: 'Proteína', prod: 'Atum ao natural', qty: '3 latas', price: 2.67, status: 'Comprar', day: '2ª' },
+      { id: 6, cat: 'Proteína', prod: 'Skyr natural (150 g)', qty: '3 un', price: 1.95, status: 'Comprar', day: '2ª' },
+      { id: 7, cat: 'Proteína', prod: 'Iogurte proteico', qty: '1 un', price: 0.85, status: 'Comprar', day: '2ª' },
+      { id: 8, cat: 'Proteína', prod: 'Iogurte natural', qty: '2 un', price: 0.35, status: 'Comprar', day: '2ª' },
+      { id: 10, cat: 'Hidratos', prod: 'Arroz', qty: '500 g', price: 0.58, status: 'Comprar', day: '2ª' },
+      { id: 11, cat: 'Hidratos', prod: 'Batata', qty: '1 kg', price: 2.99, status: 'Comprar', day: '2ª' },
+      { id: 12, cat: 'Hidratos', prod: 'Banana', qty: '5 un', price: 1.30, status: 'Comprar', day: '2ª' },
+      { id: 13, cat: 'Hidratos', prod: 'Grão', qty: '400 g', price: 0.90, status: 'Comprar', day: '2ª' },
+      { id: 14, cat: 'Legumes', prod: 'Brócolos', qty: '400 g', price: 2.34, status: 'Comprar', day: '2ª' },
+      { id: 15, cat: 'Legumes', prod: 'Cenoura baby', qty: '750g', price: 1.39, status: 'Comprar', day: '2ª' },
+      { id: 16, cat: 'Legumes', prod: 'Espinafres em folha', qty: '750 g', price: 1.29, status: 'Comprar', day: '4ª' },
+      { id: 17, cat: 'Legumes', prod: 'Mistura Brócolos, etc', qty: '1Kg', price: 1.89, status: 'Comprar', day: '2ª' },
+      { id: 18, cat: 'Legumes', prod: 'Couve de Bruxelas', qty: '750g', price: 1.29, status: 'Comprar', day: '2ª' },
+      { id: 20, cat: 'Sopa Preparada', prod: 'Agrião', qty: '800g', price: 2.49, status: 'Comprar', day: '2ª' },
+      { id: 21, cat: 'Sopa Preparada', prod: 'Creme de Legumes', qty: '800g', price: 2.49, status: 'Comprar', day: '4ª' },
+      { id: 22, cat: 'Sopa Preparada', prod: 'Creme de Cenoura', qty: '800g', price: 2.49, status: 'Comprar', day: '5ª' },
+    ];
+
+    // --- HELPERS ---
+    const money = (n) => (Number(n || 0)).toFixed(2).replace('.', ',') + '€';
+    const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+
+    function buildTrendSVG(entries) {
+      const last = entries.slice(0, 6).reverse();
+      if (last.length === 0) return '';
+
+      const w = 520, h = 160, pad = 18;
+      const chartW = w - pad*2, chartH = h - pad*2;
+      const barGroupW = chartW / last.length;
+      const barW = clamp(barGroupW * 0.32, 14, 28);
+      const gap = clamp(barGroupW * 0.12, 6, 16);
+
+      const grid = [0,25,50,75,100].map(p => {
+        const y = pad + chartH - (chartH * p / 100);
+        return `<line x1="${pad}" y1="${y}" x2="${w-pad}" y2="${y}" stroke="#e2e8f0" stroke-dasharray="4 4" />`;
+      }).join('');
+
+      const bars = last.map((e, idx) => {
+        const x0 = pad + idx * barGroupW + (barGroupW - (barW*2 + gap)) / 2;
+
+        const plan = clamp(e.planProgress || 0, 0, 100);
+        const shop = clamp(e.shopProgress || 0, 0, 100);
+
+        const planH = (chartH * plan) / 100;
+        const shopH = (chartH * shop) / 100;
+
+        const xPlan = x0;
+        const yPlan = pad + (chartH - planH);
+        const xShop = x0 + barW + gap;
+        const yShop = pad + (chartH - shopH);
+
+        const label = String(e.date || '').replace('Semana de ', '').slice(0, 10);
+
+        return `
+          <g>
+            <rect x="${xPlan}" y="${yPlan}" width="${barW}" height="${planH}" rx="8" fill="#10b981" opacity="0.95"/>
+            <rect x="${xShop}" y="${yShop}" width="${barW}" height="${shopH}" rx="8" fill="#2563eb" opacity="0.85"/>
+            <text x="${pad + idx*barGroupW + barGroupW/2}" y="${h-6}" text-anchor="middle" font-size="10" fill="#94a3b8" font-weight="700">${label}</text>
+          </g>
+        `;
+      }).join('');
+
+      return `
+        <svg viewBox="0 0 ${w} ${h}" class="w-full h-auto">
+          ${grid}
+          ${bars}
+        </svg>
+      `;
+    }
+
+    // --------------------------
+    // CÁLCULO: Semana atual (live)
+    // --------------------------
+    function computeWeekMetricsFromState() {
+      const totalMeals = daysList.length * 4;
+
+      let plannedCals = 0, plannedProt = 0;
+      daysList.forEach(d => mealData[d].forEach(m => { plannedCals += m.cals; plannedProt += m.protein; }));
+
+      let execPlannedC = 0, execPlannedP = 0, execMealsCount = 0;
+      daysList.forEach(d => {
+        mealData[d].forEach(m => {
+          if (completedMeals[`${d}-${m.id}`]) {
+            execPlannedC += m.cals;
+            execPlannedP += m.protein;
+            execMealsCount += 1;
+          }
+        });
+      });
+
+      let extraC = 0, extraP = 0, extraCount = 0;
+      daysList.forEach(d => {
+        (extraMeals[d] || []).forEach(x => {
+          extraC += (x.cals || 0);
+          extraP += (x.prot || 0);
+          extraCount += 1;
+        });
+      });
+
+      let burned = 0, sessions = 0;
+      daysList.forEach(d => {
+        (dailyExercise[d] || []).forEach(ex => {
+          burned += (ex.cals || 0);
+          sessions += 1;
+        });
+      });
+
+      const toBuyItems = shoppingData.filter(i => i.status === 'Comprar');
+      const boughtItems = toBuyItems.filter(i => checkedItems[i.id]);
+      const spendToBuy = toBuyItems.reduce((a,i)=>a+(i.price||0),0);
+      const spendBought = boughtItems.reduce((a,i)=>a+(i.price||0),0);
+      const remaining = Math.max(0, spendToBuy - spendBought);
+
+      const planProgress = totalMeals > 0 ? Math.round((execMealsCount / totalMeals) * 100) : 0;
+      const shopProgress = toBuyItems.length > 0 ? Math.round((boughtItems.length / toBuyItems.length) * 100) : 0;
+
+      const totalCals = execPlannedC + extraC;
+      const totalProt = execPlannedP + extraP;
+
+      const avgCals = Math.round(totalCals / 5);
+      const avgProt = Math.round(totalProt / 5);
+
+      const netAvg = Math.round((totalCals - burned) / 5);
+
+      const status =
+        planProgress > 90 ? "Foco Total" :
+        planProgress > 70 ? "Bom Progresso" :
+        planProgress > 0 ? "Recuperação" : "Por iniciar";
+
+      return {
+        planProgress,
+        shopProgress,
+        status,
+        details: { mealsExecuted: execMealsCount, totalMeals, itemsBought: boughtItems.length, totalItems: toBuyItems.length },
+        extras: { count: extraCount, cals: extraC, prot: extraP },
+        totals: { cals: totalCals, prot: totalProt, netAvg, plannedCals, plannedProt, execPlannedC, execPlannedP },
+        shopping: { toBuy: toBuyItems.length, bought: boughtItems.length, spendToBuy, spendBought, remaining },
+        exercise: { sessions, burned },
+        averages: { avgCals, avgProt }
+      };
+    }
+
+    // --- CORE ---
+    function switchTab(tabId) {
+      activeTab = tabId;
+      render();
+      window.scrollTo({top:0});
+    }
+    window.switchTab = switchTab;
+
+    function updateSelectedDay(day) { selectedDay = day; saveState(); render(); }
+    window.updateSelectedDay = updateSelectedDay;
+
+    function toggleMeal(id) {
+      const key = `${selectedDay}-${id}`;
+      completedMeals[key] = !completedMeals[key];
+      saveState();
+      logEvent("MEAL_TOGGLE", selectedDay, id, { done: completedMeals[key] });
+      render();
+    }
+    window.toggleMeal = toggleMeal;
+
+    function toggleShopping(id) {
+      checkedItems[id] = !checkedItems[id];
+      saveState();
+      logEvent("SHOP_TOGGLE", "", String(id), { checked: checkedItems[id] });
+      render();
+    }
+    window.toggleShopping = toggleShopping;
+
+    function toggleExtraForm() { document.getElementById('extra-meal-form').classList.toggle('hidden'); }
+    window.toggleExtraForm = toggleExtraForm;
+
+    function toggleExerciseForm() { document.getElementById('exercise-form').classList.toggle('hidden'); }
+    window.toggleExerciseForm = toggleExerciseForm;
+
+    function addExtraMeal() {
+      const name = document.getElementById('ex-name').value;
+      const qty = document.getElementById('ex-qty').value;
+      const cals = parseInt(document.getElementById('ex-cals').value) || 0;
+      const prot = parseInt(document.getElementById('ex-prot').value) || 0;
+      const time = document.getElementById('ex-time').value || '--:--';
+      if (!name) return;
+
+      const id = Date.now();
+      extraMeals[selectedDay].push({ id, name, qty, cals, prot, time });
+
+      ['ex-name','ex-qty','ex-cals','ex-prot','ex-time'].forEach(fid => document.getElementById(fid).value = '');
+      toggleExtraForm();
+      saveState();
+      logEvent("EXTRA_ADD", selectedDay, "extra_" + id, { name, qty, cals, prot, time });
+      render();
+    }
+    window.addExtraMeal = addExtraMeal;
+
+    function removeExtraMeal(id) {
+      extraMeals[selectedDay] = (extraMeals[selectedDay] || []).filter(m => m.id !== id);
+      saveState();
+      logEvent("EXTRA_REMOVE", selectedDay, String(id), {});
+      render();
+    }
+    window.removeExtraMeal = removeExtraMeal;
+
+    function addExerciseEntry() {
+      const name = document.getElementById('exer-name').value;
+      const cals = parseInt(document.getElementById('exer-cals').value) || 0;
+      if (!name || cals <= 0) return;
+
+      const id = Date.now();
+      dailyExercise[selectedDay].push({ id, name, cals });
+
+      document.getElementById('exer-name').value = '';
+      document.getElementById('exer-cals').value = '';
+      toggleExerciseForm();
+      saveState();
+      logEvent("EXERCISE_ADD", selectedDay, "ex_" + id, { name, cals });
+      render();
+    }
+    window.addExerciseEntry = addExerciseEntry;
+
+    function removeExerciseEntry(id) {
+      dailyExercise[selectedDay] = (dailyExercise[selectedDay] || []).filter(ex => ex.id !== id);
+      saveState();
+      logEvent("EXERCISE_REMOVE", selectedDay, String(id), {});
+      render();
+    }
+    window.removeExerciseEntry = removeExerciseEntry;
+
+    function calculatePlanProgress() {
+      const total = daysList.length * 4;
+      const done = Object.values(completedMeals).filter(Boolean).length;
+      return total > 0 ? Math.round((done / total) * 100) : 0;
+    }
+
+    function resetMeals() {
+      completedMeals = {};
+      extraMeals = { '2ª': [], '3ª': [], '4ª': [], '5ª': [], '6ª': [] };
+      dailyExercise = { '2ª': [], '3ª': [], '4ª': [], '5ª': [], '6ª': [] };
+      saveState();
+      logEvent("RESET_MEALS");
+      render();
+    }
+    window.resetMeals = resetMeals;
+
+    function resetShopping() {
+      checkedItems = {};
+      saveState();
+      logEvent("RESET_SHOPPING");
+      render();
+    }
+    window.resetShopping = resetShopping;
+
+    function resetHistory() {
+      historyEntries = [];
+      saveState();
+      logEvent("RESET_HISTORY");
+      // opcional: apaga também da cloud
+      deleteAllWeeksFromFirestore();
+      render();
+    }
+    window.resetHistory = resetHistory;
+
+    async function archiveWeek() {
+      const snapshot = computeWeekMetricsFromState();
+
+      // grava na cloud (events + weeks)
+      logEvent("WEEK_ARCHIVE", "", "week_" + Date.now(), snapshot);
+      await saveWeekSnapshot(snapshot);
+
+      // adiciona também local para render imediato
+      const entry = {
+        id: Date.now(),
+        date: `Semana de ${new Date().toLocaleDateString('pt-PT')}`,
+        planProgress: snapshot.planProgress,
+        shopProgress: snapshot.shopProgress,
+        avgCals: snapshot.averages.avgCals,
+        avgProt: snapshot.averages.avgProt,
+        burned: snapshot.exercise.burned,
+        status: snapshot.status,
+        details: snapshot.details,
+        extras: snapshot.extras,
+        totals: snapshot.totals,
+        shopping: snapshot.shopping,
+        exercise: snapshot.exercise
+      };
+      historyEntries.unshift(entry);
+
+      // limpa semana corrente (porque foi arquivada)
+      resetMeals();
+      checkedItems = {};
+      saveState();
+
+      switchTab('history');
+    }
+    window.archiveWeek = archiveWeek;
+
+    // --- RENDERS ---
+    function updateDashboard() {
+      const dayMeals = mealData[selectedDay];
+      const extras = extraMeals[selectedDay] || [];
+      const exercises = dailyExercise[selectedDay] || [];
+
+      const targetCals = dayMeals.reduce((acc, m) => acc + m.cals, 0);
+      const targetProt = dayMeals.reduce((acc, m) => acc + m.protein, 0);
+      const consumedPlanned = dayMeals.reduce((acc, m) => completedMeals[`${selectedDay}-${m.id}`] ? acc + m.cals : acc, 0);
+      const consumedExtra = extras.reduce((acc, m) => acc + (m.cals || 0), 0);
+      const protPlanned = dayMeals.reduce((acc, m) => completedMeals[`${selectedDay}-${m.id}`] ? acc + m.protein : acc, 0);
+      const protExtra = extras.reduce((acc, m) => acc + (m.prot || 0), 0);
+      const burned = exercises.reduce((acc, ex) => acc + (ex.cals || 0), 0);
+
+      const prog = calculatePlanProgress();
+
+      const hNet = document.getElementById('header-net-cals');
+      const hProt = document.getElementById('header-protein');
+      if (hNet) hNet.innerText = (targetCals - burned);
+      if (hProt) hProt.innerText = targetProt;
+
+      const dProgT = document.getElementById('weekly-progress-text');
+      const dProgB = document.getElementById('weekly-progress-bar');
+      const dCons = document.getElementById('consumed-cals-text');
+      const dBurn = document.getElementById('burned-cals-text');
+      const dProt = document.getElementById('protein-text');
+      const dBtn = document.getElementById('btn-archive');
+
+      if (dProgT) dProgT.innerText = `${prog}%`;
+      if (dProgB) dProgB.style.width = `${prog}%`;
+      if (dCons) dCons.innerText = `${consumedPlanned + consumedExtra} kcal`;
+      if (dBurn) dBurn.innerText = `${burned} kcal`;
+      if (dProt) dProt.innerText = `${protPlanned + protExtra}g / ${targetProt}g`;
+
+      if (dBtn) dBtn.classList.toggle('hidden', prog < 5);
+    }
+
+    function renderMeals() {
+      updateDashboard();
+
+      const nav = document.getElementById('day-nav');
+      if (nav) {
+        nav.innerHTML = daysList.map(d => `
+          <button onclick="updateSelectedDay('${d}')" class="px-6 py-2 rounded-xl text-xs font-bold transition-all ${selectedDay === d ? 'bg-emerald-600 text-white shadow-md' : 'bg-white text-slate-400 border border-slate-200'}">
+            ${d}
+          </button>
+        `).join('');
+      }
+
+      const listEx = document.getElementById('exercise-list');
+      if (listEx) {
+        listEx.innerHTML = (dailyExercise[selectedDay] || []).length === 0
+          ? `<div class="text-[11px] text-slate-300 italic px-2">Sem gasto ativo registado.</div>`
+          : (dailyExercise[selectedDay] || []).map(ex => `
+              <div class="bg-white p-4 rounded-xl border border-blue-50 flex justify-between items-center shadow-sm">
+                <div class="flex items-center gap-3">
+                  <div class="bg-blue-600 p-1.5 rounded-lg text-white"><i data-lucide="flame" class="w-3.5 h-3.5"></i></div>
+                  <div>
+                    <div class="text-sm font-bold text-slate-800">${ex.name}</div>
+                    <div class="text-[10px] text-blue-600 font-bold uppercase">${ex.cals} kcal</div>
+                  </div>
+                </div>
+                <button onclick="removeExerciseEntry(${ex.id})" class="text-slate-300 p-2"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+              </div>
+            `).join('');
+      }
+
+      const cardM = document.getElementById('meal-cards');
+      if (cardM) {
+        cardM.innerHTML = mealData[selectedDay].map(m => {
+          const isDone = completedMeals[`${selectedDay}-${m.id}`];
+          return `
+            <div onclick="toggleMeal('${m.id}')" class="bg-white p-5 border-b sm:border border-slate-100 flex items-center gap-5 active:bg-slate-50 transition-all ${isDone ? 'bg-slate-50/50' : ''}">
+              <div class="p-4 rounded-2xl ${isDone ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-50 text-slate-300'}">
+                <i data-lucide="${isDone ? 'check-circle-2' : m.icon}" class="w-6 h-6"></i>
+              </div>
+              <div class="flex-1">
+                <div class="flex justify-between items-start mb-1">
+                  <span class="text-[10px] font-bold uppercase text-slate-400 tracking-widest">${m.title}</span>
+                  <span class="text-[10px] font-black text-orange-600 bg-orange-50 px-2 py-0.5 rounded border border-orange-100">${m.cals} kcal</span>
+                </div>
+                <h4 class="text-base font-bold text-slate-800 ${isDone ? 'line-through text-slate-400 italic' : ''}">${m.content}</h4>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      const extraM = document.getElementById('extra-meals-list');
+      if (extraM) {
+        extraM.innerHTML = (extraMeals[selectedDay] || []).map(m => `
+          <div class="bg-white p-4 rounded-xl border border-emerald-50 flex justify-between items-center shadow-sm">
+            <div class="flex items-center gap-3">
+              <span class="text-[10px] font-bold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-md">${m.time}</span>
+              <div>
+                <div class="text-sm font-bold text-slate-800">${m.name}</div>
+                <div class="text-[10px] text-slate-400 uppercase font-bold">${m.qty || 'Extra'}</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-4">
+              <div class="text-right">
+                <div class="text-xs font-black text-orange-600">${m.cals} kcal</div>
+                <div class="text-xs font-black text-blue-600">${m.prot}g P</div>
+              </div>
+              <button onclick="removeExtraMeal(${m.id})" class="text-slate-300 p-1"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      lucide.createIcons();
+    }
+
+    function renderShopping() {
+      const container = document.getElementById('shopping-list-content');
+      if (!container) return;
+
+      const cats = [...new Set(shoppingData.map(i => i.cat))];
+      const toBuy = shoppingData.filter(i => i.status === 'Comprar').length;
+      const bought = shoppingData.filter(i => i.status === 'Comprar' && checkedItems[i.id]).length;
+
+      const summ = document.getElementById('shopping-summary');
+      if (summ) summ.innerText = `${bought} de ${toBuy} itens adquiridos`;
+
+      const badge = document.getElementById('shopping-badge');
+      if (badge) {
+        badge.innerText = toBuy - bought;
+        badge.classList.toggle('hidden', (toBuy - bought) === 0);
+      }
+
+      container.innerHTML = cats.map(cat => `
+        <div class="space-y-4">
+          <h4 class="text-xs font-black uppercase tracking-widest text-slate-400 border-l-4 border-emerald-500 pl-3">${cat}</h4>
+          <div class="space-y-px sm:space-y-3">
+            ${shoppingData.filter(i => i.cat === cat).map(i => {
+              const isCheck = !!checkedItems[i.id];
+              return `
+                <div onclick="toggleShopping(${i.id})" class="bg-white p-5 border-b sm:border sm:rounded-2xl flex justify-between items-center active:bg-slate-50 transition-all ${isCheck ? 'opacity-40 grayscale' : 'shadow-sm'}">
+                  <div class="flex items-center gap-4">
+                    <i data-lucide="${isCheck ? 'check-square' : 'square'}" class="w-6 h-6 ${isCheck ? 'text-emerald-600' : 'text-slate-300'}"></i>
+                    <div class="flex flex-col">
+                      <div class="flex items-center gap-2">
+                        <span class="text-base font-bold ${isCheck ? 'line-through' : ''}">${i.prod}</span>
+                        ${i.day !== '2ª' && i.day !== '—' ? `<span class="text-[8px] font-black px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 uppercase tracking-tighter border border-amber-200">${i.day}</span>` : ''}
+                      </div>
+                      <span class="text-xs font-bold text-slate-400 uppercase">${i.qty}</span>
+                    </div>
+                  </div>
+                  <span class="text-base font-black text-slate-900">${i.price.toFixed(2)}€</span>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    function renderCurrentWeekCard() {
+      const el = document.getElementById('current-week-card');
+      if (!el) return;
+
+      const m = computeWeekMetricsFromState();
+
+      const planLabel = `${m.details.mealsExecuted}/${m.details.totalMeals}`;
+      const shopLabel = `${m.details.itemsBought}/${m.details.totalItems}`;
+
+      el.innerHTML = `
+        <div class="flex justify-between items-start mb-6">
+          <div>
+            <div class="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Semana Atual (em curso)</div>
+            <div class="text-xl font-black text-slate-800 mt-1">${m.status}</div>
+            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">
+              Net médio/dia: <span class="text-slate-700 font-black">${m.totals.netAvg} kcal</span>
+            </div>
+          </div>
+          <button onclick="archiveWeek()" class="no-print bg-slate-900 text-white px-4 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest active:scale-95">
+            Arquivar Semana
+          </button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-6">
+          <div class="bg-orange-50/60 p-5 rounded-3xl border border-orange-100/60">
+            <div class="text-[9px] font-black text-orange-400 uppercase tracking-widest mb-1 italic">Média kcal/dia</div>
+            <div class="text-2xl font-black text-orange-600">${m.averages.avgCals} <span class="text-xs">kcal</span></div>
+            <div class="text-[10px] font-black text-orange-500 mt-2">Extras: ${m.extras.count} (${m.extras.cals} kcal)</div>
+          </div>
+
+          <div class="bg-blue-50/60 p-5 rounded-3xl border border-blue-100/60">
+            <div class="text-[9px] font-black text-blue-400 uppercase tracking-widest mb-1 italic">Média proteína/dia</div>
+            <div class="text-2xl font-black text-blue-600">${m.averages.avgProt} <span class="text-xs">g</span></div>
+            <div class="text-[10px] font-black text-blue-600 mt-2">Total semana: ${m.totals.prot} g</div>
+          </div>
+        </div>
+
+        <div class="space-y-5">
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Cumprimento do Plano
+              </span>
+              <span class="text-xs font-black text-slate-700">${m.planProgress}% <span class="text-slate-400">(${planLabel})</span></span>
+            </div>
+            <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+              <div class="bg-emerald-500 h-full rounded-full transition-all duration-700" style="width:${m.planProgress}%"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i> Eficiência de Compras
+              </span>
+              <span class="text-xs font-black text-slate-700">${m.shopProgress}% <span class="text-slate-400">(${shopLabel})</span></span>
+            </div>
+            <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+              <div class="bg-blue-600 h-full rounded-full transition-all duration-700" style="width:${m.shopProgress}%"></div>
+            </div>
+            <div class="flex justify-between mt-2 text-[9px] font-black uppercase tracking-widest text-slate-400">
+              <span>Gasto: <span class="text-slate-700">${money(m.shopping.spendBought)}</span></span>
+              <span>Por comprar: <span class="text-slate-700">${money(m.shopping.remaining)}</span></span>
+            </div>
+          </div>
+
+          <div class="flex justify-between items-center pt-4 border-t border-slate-50">
+            <div class="flex items-center gap-3">
+              <div class="bg-blue-600 p-2.5 rounded-2xl text-white"><i data-lucide="flame" class="w-4 h-4"></i></div>
+              <div>
+                <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Exercício (semana)</div>
+                <div class="text-sm font-black text-slate-700">${m.exercise.burned.toLocaleString()} kcal <span class="text-slate-400">(${m.exercise.sessions} sessões)</span></div>
+              </div>
+            </div>
+
+            <div class="bg-slate-50 px-4 py-2.5 rounded-2xl text-right">
+              <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Saldo</div>
+              <div class="text-xs font-black ${m.totals.netAvg <= 0 ? 'text-emerald-600' : 'text-slate-700'}">
+                ${m.totals.netAvg <= 0 ? 'Deficit/Equilíbrio' : 'Acima do alvo'}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      lucide.createIcons();
+    }
+
+    function renderHistory() {
+      renderCurrentWeekCard();
+
+      const container = document.getElementById('history-dashboard-container');
+      const summaryContainer = document.getElementById('history-summary-kpis');
+      const trend = document.getElementById('history-trend');
+      if (!container || !summaryContainer || !trend) return;
+
+      if (historyEntries.length === 0) {
+        summaryContainer.innerHTML = '';
+        trend.innerHTML = `
+          <div class="p-10 text-center text-slate-300 font-bold text-sm uppercase italic border-2 border-dashed border-slate-100 rounded-[2.5rem]">
+            Ainda não há semanas arquivadas. Quando arquivares, isto vira “modo CEO”.
+          </div>
+        `;
+        container.innerHTML = `
+          <div class="p-16 text-center text-slate-300 font-bold text-sm uppercase italic border-2 border-dashed border-slate-100 rounded-[2.5rem]">
+            Histórico vazio. Arquiva a semana para criar o relatório.
+          </div>
+        `;
+        return;
+      }
+
+      const avgPlan = Math.round(historyEntries.reduce((acc, e) => acc + (e.planProgress || 0), 0) / historyEntries.length);
+      const avgShop = Math.round(historyEntries.reduce((acc, e) => acc + (e.shopProgress || 0), 0) / historyEntries.length);
+      const totalBurned = historyEntries.reduce((acc, e) => acc + (e.exercise?.burned || e.burned || 0), 0);
+
+      const avgExtraCals = Math.round(historyEntries.reduce((acc, e) => acc + (e.extras?.cals || 0), 0) / historyEntries.length);
+      const avgProt = Math.round(historyEntries.reduce((acc, e) => acc + (e.avgProt || 0), 0) / historyEntries.length);
+      const avgNet = Math.round(historyEntries.reduce((acc, e) => acc + (e.totals?.netAvg || 0), 0) / historyEntries.length);
+
+      summaryContainer.innerHTML = `
+        <div class="bg-emerald-600 p-5 rounded-3xl text-white shadow-lg kpi-card">
+          <div class="text-[9px] font-black uppercase opacity-70 tracking-widest mb-1">Adesão Média</div>
+          <div class="text-2xl font-black">${avgPlan}%</div>
+          <div class="text-[9px] font-black uppercase opacity-70 tracking-widest mt-2">Net médio/dia</div>
+          <div class="text-sm font-black">${avgNet} kcal</div>
+        </div>
+
+        <div class="bg-slate-900 p-5 rounded-3xl text-white shadow-lg kpi-card">
+          <div class="text-[9px] font-black uppercase opacity-70 tracking-widest mb-1">Queima Total</div>
+          <div class="text-2xl font-black">${totalBurned.toLocaleString()} <span class="text-[10px]">kcal</span></div>
+          <div class="text-[9px] font-black uppercase opacity-70 tracking-widest mt-2">Prot. média/dia</div>
+          <div class="text-sm font-black">${avgProt} g</div>
+        </div>
+
+        <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm col-span-2 flex justify-between items-center kpi-card">
+          <div>
+            <div class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-0.5">Eficiência Compras</div>
+            <div class="text-xl font-black text-slate-800">${avgShop}%</div>
+            <div class="text-[9px] font-black uppercase text-slate-400 tracking-widest mt-2">Extras (média)</div>
+            <div class="text-sm font-black text-orange-600">${avgExtraCals} kcal/sem</div>
+          </div>
+          <div class="text-right">
+            <div class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-0.5">Semanas Ativas</div>
+            <div class="text-xl font-black text-emerald-600">${historyEntries.length}</div>
+            <div class="text-[9px] font-black uppercase text-slate-400 tracking-widest mt-2">Última</div>
+            <div class="text-sm font-black text-slate-700">${historyEntries[0].status || '—'}</div>
+          </div>
+        </div>
+      `;
+
+      trend.innerHTML = `
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <div class="text-[10px] font-black uppercase tracking-widest text-slate-400">Últimas Semanas</div>
+            <div class="text-lg font-black text-slate-800">Plano vs Compras</div>
+          </div>
+          <div class="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest">
+            <span class="flex items-center gap-1 text-emerald-600"><span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>Plano</span>
+            <span class="flex items-center gap-1 text-blue-600"><span class="w-2 h-2 rounded-full bg-blue-600 inline-block"></span>Compras</span>
+          </div>
+        </div>
+        <div class="bg-slate-50 rounded-3xl border border-slate-100 p-4">
+          ${buildTrendSVG(historyEntries)}
+        </div>
+        <div class="mt-3 flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+          <span>Imprime limpo</span><span>0–100%</span>
+        </div>
+      `;
+
+      container.innerHTML = historyEntries.map(e => {
+        const mealsDone = e.details?.mealsExecuted ?? 0;
+        const mealsTotal = e.details?.totalMeals ?? 20;
+
+        const extrasCount = e.extras?.count ?? 0;
+        const extrasCals = e.extras?.cals ?? 0;
+
+        const totalProt = e.totals?.prot ?? (e.avgProt ? e.avgProt * 5 : 0);
+        const netAvg = e.totals?.netAvg ?? 0;
+
+        const spendBought = e.shopping?.spendBought ?? 0;
+        const remaining = e.shopping?.remaining ?? 0;
+
+        const shopBought = e.shopping?.bought ?? e.details?.itemsBought ?? 0;
+        const shopTotal = e.shopping?.toBuy ?? e.details?.totalItems ?? 0;
+
+        const exSessions = e.exercise?.sessions ?? 0;
+        const burnedW = e.exercise?.burned ?? e.burned ?? 0;
+
+        return `
+          <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 card-shadow card-report relative overflow-hidden print-avoid-break">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 -mr-16 -mt-16 rounded-full"></div>
+
+            <div class="flex justify-between items-start mb-7 relative z-10">
+              <div>
+                <p class="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1">Relatório Semanal</p>
+                <h3 class="text-xl font-black text-slate-800">${e.date}</h3>
+                <div class="flex gap-2 mt-3">
+                  <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-[9px] font-black uppercase tracking-widest">${e.status}</span>
+                  <span class="px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-[9px] font-black uppercase tracking-widest">Net ${netAvg}kcal/d</span>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-3xl font-black text-slate-800 leading-none">${e.planProgress}%</div>
+                <div class="text-[9px] font-bold text-slate-400 uppercase mt-2">Cumprimento</div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-7 relative z-10">
+              <div class="bg-orange-50/60 p-5 rounded-3xl border border-orange-100/60">
+                <div class="text-[9px] font-black text-orange-400 uppercase tracking-widest mb-1 italic">Consumo Médio</div>
+                <div class="text-2xl font-black text-orange-600">${e.avgCals} <span class="text-xs">kcal</span></div>
+                <div class="text-[10px] font-black text-orange-500 mt-2">Extras: ${extrasCount} (${extrasCals} kcal)</div>
+              </div>
+              <div class="bg-blue-50/60 p-5 rounded-3xl border border-blue-100/60">
+                <div class="text-[9px] font-black text-blue-400 uppercase tracking-widest mb-1 italic">Média Prot.</div>
+                <div class="text-2xl font-black text-blue-600">${e.avgProt} <span class="text-xs">g/dia</span></div>
+                <div class="text-[10px] font-black text-blue-600 mt-2">Total semana: ${totalProt} g</div>
+              </div>
+            </div>
+
+            <div class="space-y-5 relative z-10">
+              <div>
+                <div class="flex justify-between items-center mb-2">
+                  <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Plano
+                  </span>
+                  <span class="text-xs font-black text-slate-700">${mealsDone}/${mealsTotal}</span>
                 </div>
                 <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-                    <div id="weekly-progress-bar" class="bg-emerald-500 h-full w-0 transition-all duration-1000"></div>
+                  <div class="bg-emerald-500 h-full rounded-full transition-all duration-700" style="width:${e.planProgress}%"></div>
                 </div>
-                <button onclick="archiveWeek()" id="btn-archive" class="hidden w-full mt-5 py-3 bg-slate-900 text-white rounded-xl text-xs font-bold uppercase tracking-widest active:scale-95 transition-all">
-                    Finalizar e Arquivar Semana
-                </button>
-            </div>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-px sm:gap-4">
-                <div class="bg-white p-5 sm:rounded-2xl border-b sm:border border-slate-100 flex justify-between items-center">
-                    <div class="flex items-center gap-3">
-                        <div class="bg-orange-100 p-2 rounded-lg text-orange-600"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                        <div>
-                            <div class="text-[10px] font-bold uppercase text-slate-400">Consumido Hoje</div>
-                            <div id="consumed-cals-text" class="text-lg font-bold">0 kcal</div>
-                        </div>
-                    </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between items-center mb-2">
+                  <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                    <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i> Compras
+                  </span>
+                  <span class="text-xs font-black text-slate-700">${shopBought}/${shopTotal}</span>
                 </div>
-                <div class="bg-white p-5 sm:rounded-2xl border-b sm:border border-slate-100 flex justify-between items-center">
-                    <div class="flex items-center gap-3">
-                        <div class="bg-blue-100 p-2 rounded-lg text-blue-600"><i data-lucide="minus" class="w-4 h-4"></i></div>
-                        <div>
-                            <div class="text-[10px] font-bold uppercase text-slate-400">Gasto Ativo</div>
-                            <div id="burned-cals-text" class="text-lg font-bold">0 kcal</div>
-                        </div>
-                    </div>
+                <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+                  <div class="bg-blue-600 h-full rounded-full transition-all duration-700" style="width:${e.shopProgress}%"></div>
                 </div>
-                <!-- Card de Proteína (Essencial para o JS funcionar) -->
-                <div class="bg-white p-5 sm:rounded-2xl border-b sm:border border-slate-100 flex justify-between items-center col-span-1 sm:col-span-2">
-                    <div class="flex items-center gap-3">
-                        <div class="bg-emerald-100 p-2 rounded-lg text-emerald-600"><i data-lucide="dna" class="w-4 h-4"></i></div>
-                        <div>
-                            <div class="text-[10px] font-bold uppercase text-slate-400">Proteína Acumulada</div>
-                            <div id="protein-text" class="text-lg font-bold">0g</div>
-                        </div>
-                    </div>
+                <div class="flex justify-between mt-2 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                  <span>Gasto: <span class="text-slate-700">${money(spendBought)}</span></span>
+                  <span>Por comprar: <span class="text-slate-700">${money(remaining)}</span></span>
                 </div>
-            </div>
-        </section>
+              </div>
 
-        <!-- Navegador de Dias -->
-        <div id="day-nav" class="sticky top-[73px] z-40 bg-white/70 backdrop-blur-md border-b border-slate-200 flex gap-2 p-3 overflow-x-auto no-scrollbar no-print">
-            <!-- JS -->
-        </div>
-
-        <!-- Vista: PLANO -->
-        <div id="view-meals" class="space-y-px sm:space-y-4 no-print">
-            <div id="exercise-input" class="p-4 sm:p-0"></div>
-            <div id="meal-cards" class="space-y-px sm:space-y-3"></div>
-            
-            <!-- Secção Extras -->
-            <div class="p-4 space-y-4">
-                <div class="flex items-center justify-between px-1">
-                    <h3 class="text-xs font-black uppercase tracking-widest text-slate-400 italic">Extras não previstos</h3>
-                    <button onclick="toggleExtraForm()" class="bg-emerald-500 text-white p-1.5 rounded-lg shadow-sm active:scale-90">
-                        <i data-lucide="plus" class="w-4 h-4"></i>
-                    </button>
+              <div class="flex justify-between items-center pt-4 border-t border-slate-50">
+                <div class="flex items-center gap-3">
+                  <div class="bg-blue-600 p-2.5 rounded-2xl text-white"><i data-lucide="flame" class="w-4 h-4"></i></div>
+                  <div>
+                    <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Queima</div>
+                    <div class="text-sm font-black text-slate-700">${burnedW.toLocaleString()} kcal <span class="text-slate-400">(${exSessions} sessões)</span></div>
+                  </div>
                 </div>
-                <div id="extra-meal-form" class="hidden bg-white p-5 rounded-2xl border border-emerald-100 shadow-sm space-y-3">
-                    <input id="ex-name" type="text" placeholder="Alimento..." class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm outline-none">
-                    <input id="ex-qty" type="text" placeholder="Qtd (ex: 100g)..." class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm outline-none">
-                    <div class="grid grid-cols-3 gap-2">
-                        <input id="ex-cals" type="number" placeholder="kcal" class="bg-slate-50 border border-slate-100 rounded-xl py-3 text-sm text-center outline-none">
-                        <input id="ex-prot" type="number" placeholder="Prot.g" class="bg-slate-50 border border-slate-100 rounded-xl py-3 text-sm text-center outline-none">
-                        <input id="ex-time" type="text" placeholder="Hora" class="bg-slate-50 border border-slate-100 rounded-xl py-3 text-sm text-center outline-none">
-                    </div>
-                    <button onclick="addExtraMeal()" class="w-full py-3 bg-emerald-600 text-white rounded-xl text-sm font-bold uppercase tracking-widest shadow-lg shadow-emerald-100">Adicionar</button>
+                <div class="bg-slate-50 px-4 py-2.5 rounded-2xl text-right">
+                  <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Estado</div>
+                  <div class="text-xs font-black ${e.planProgress>=90 ? 'text-emerald-600' : e.planProgress>=70 ? 'text-amber-600' : 'text-red-500'}">
+                    ${e.planProgress>=90 ? 'Premium' : e.planProgress>=70 ? 'Consistente' : 'A recuperar'}
+                  </div>
                 </div>
-                <div id="extra-meals-list" class="space-y-2"></div>
+              </div>
             </div>
+          </div>
+        `;
+      }).join('');
 
-            <div class="p-6">
-                <button onclick="resetMeals()" class="w-full py-4 border-2 border-dashed border-slate-200 text-slate-400 rounded-2xl text-xs font-bold uppercase flex items-center justify-center gap-3">
-                    <i data-lucide="refresh-cw" class="w-4 h-4"></i> Reset Plano
-                </button>
-            </div>
-        </div>
+      lucide.createIcons();
+    }
 
-        <!-- Vista: COMPRAS -->
-        <div id="view-shopping" class="hidden space-y-6 no-print">
-            <div class="bg-emerald-600 p-8 text-white text-center">
-                <h3 class="font-bold text-2xl flex items-center justify-center gap-3 mb-2"><i data-lucide="shopping-cart" class="w-6 h-6"></i> Compras</h3>
-                <p id="shopping-summary" class="text-xs opacity-90 uppercase font-black">A carregar...</p>
-            </div>
-            <div id="shopping-list-content" class="p-4 space-y-8"></div>
-            <div class="p-6">
-                <button onclick="resetShopping()" class="w-full py-4 border-2 border-dashed border-slate-200 text-slate-400 rounded-2xl text-xs font-bold uppercase flex items-center justify-center gap-3">
-                    <i data-lucide="refresh-cw" class="w-4 h-4"></i> Limpar Lista
-                </button>
-            </div>
-        </div>
+    function render() {
+      document.querySelectorAll('main > div, main > section').forEach(el => el.classList.add('hidden'));
 
-        <!-- Vista: REGISTO / DASHBOARD -->
-        <div id="view-history" class="hidden p-4 space-y-6">
-            <div class="flex justify-between items-center no-print">
-                <h2 class="font-bold text-slate-400 text-[10px] uppercase tracking-[0.2em]">Dashboard Semanal</h2>
-                <button onclick="window.print()" class="text-emerald-600 flex items-center gap-1.5 text-xs font-bold bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-100">
-                    <i data-lucide="file-text" class="w-3.5 h-3.5"></i> Exportar PDF
-                </button>
-            </div>
+      ['nav-meals','nav-shopping','nav-history'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('active-tab','text-emerald-600');
+      });
 
-            <div id="history-dashboard-container" class="space-y-6">
-                <!-- Gerado via JS -->
-            </div>
+      if (activeTab === 'meals') {
+        document.getElementById('daily-dashboard').classList.remove('hidden');
+        document.getElementById('day-nav').classList.remove('hidden');
+        document.getElementById('view-meals').classList.remove('hidden');
+        document.getElementById('nav-meals').classList.add('active-tab','text-emerald-600');
+        renderMeals();
+      } else if (activeTab === 'shopping') {
+        document.getElementById('view-shopping').classList.remove('hidden');
+        document.getElementById('nav-shopping').classList.add('active-tab','text-emerald-600');
+        renderShopping();
+      } else if (activeTab === 'history') {
+        document.getElementById('view-history').classList.remove('hidden');
+        document.getElementById('nav-history').classList.add('active-tab','text-emerald-600');
+        renderHistory();
+      }
 
-            <div class="no-print">
-                <button onclick="resetHistory()" class="w-full py-4 mt-8 bg-red-50 text-red-500 border border-red-100 rounded-2xl text-xs font-bold uppercase flex items-center justify-center gap-3 active:bg-red-100">
-                    <i data-lucide="trash-2" class="w-4 h-4"></i> Limpar Todos os Registos
-                </button>
-            </div>
-        </div>
+      lucide.createIcons();
+    }
 
-    </main>
+    // --------------------------
+    // ARRANQUE (Auth + estado)
+    // --------------------------
+    loadState();
 
-    <!-- Navegação Inferior -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-50 no-print">
-        <div class="max-w-md mx-auto flex justify-around items-center pt-4 pb-8">
-            <button onclick="switchTab('meals')" class="flex flex-col items-center gap-1.5 active-tab transition-all" id="nav-meals">
-                <i data-lucide="calendar" class="w-6 h-6"></i>
-                <span class="text-[10px] font-bold uppercase">Plano</span>
-            </button>
-            <button onclick="switchTab('shopping')" class="flex flex-col items-center gap-1.5 text-slate-400 transition-all" id="nav-shopping">
-                <div class="relative">
-                    <i data-lucide="shopping-cart" class="w-6 h-6"></i>
-                    <span id="shopping-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center font-black hidden border-2 border-white">0</span>
-                </div>
-                <span class="text-[10px] font-bold uppercase">Compras</span>
-            </button>
-            <button onclick="switchTab('history')" class="flex flex-col items-center gap-1.5 text-slate-400 transition-all" id="nav-history">
-                <i data-lucide="bar-chart-2" class="w-6 h-6"></i>
-                <span class="text-[10px] font-bold uppercase">Registo</span>
-            </button>
-        </div>
-    </nav>
+    // Login anónimo automático
+    signInAnonymously(auth).catch(console.error);
 
-    <script>
-        // --- ESTADO ---
-        let activeTab = 'meals';
-        let selectedDay = '2ª';
-        let completedMeals = {};
-        let checkedItems = {};
-        let extraMeals = { '2ª': [], '3ª': [], '4ª': [], '5ª': [], '6ª': [] };
-        let dailyExercise = { '2ª': { name: '', cals: 0 }, '3ª': { name: '', cals: 0 }, '4ª': { name: '', cals: 0 }, '5ª': { name: '', cals: 0 }, '6ª': { name: '', cals: 0 } };
-        let historyEntries = [
-            { 
-                id: 1, 
-                date: "Semana: 03 Fev - 09 Fev", 
-                planProgress: 85, 
-                shopProgress: 92,
-                avgCals: 1240, 
-                avgProt: 98, 
-                burned: 1200,
-                status: "Excelente"
-            }
-        ];
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) return;
+      UID = user.uid;
 
-        const daysList = ['2ª', '3ª', '4ª', '5ª', '6ª'];
-        const mealData = {
-            '2ª': [
-                { id: 'pq', title: "Pequeno-Almoço", content: "2 ovos + 1 banana", cals: 245, protein: 14, icon: 'clock' },
-                { id: 'al', title: "Almoço", content: "Frango 150g + arroz 75g", subtitle: "Legumes: Brócolos", cals: 465, protein: 42, icon: 'activity' },
-                { id: 'la', title: "Lanche", content: "Skyr (170g)", cals: 110, protein: 18, icon: 'zap' },
-                { id: 'ja', title: "Jantar", content: "Sopa + iogurte + whey", subtitle: "Dose: 350 ml", cals: 320, protein: 28, icon: 'chef-hat' }
-            ],
-            '3ª': [
-                { id: 'pq', title: "Pequeno-Almoço", content: "2 ovos + 1 banana", cals: 245, protein: 14, icon: 'clock' },
-                { id: 'al', title: "Almoço", content: "Frango 150g + grão 100g", subtitle: "Legumes: Cenoura baby", cals: 365, protein: 40, icon: 'activity' },
-                { id: 'la', title: "Lanche", content: "Atum (1 lata)", cals: 85, protein: 22, icon: 'zap' },
-                { id: 'ja', title: "Jantar", content: "Sopa + omelete", subtitle: "Dose: 350 ml", cals: 315, protein: 18, icon: 'chef-hat' }
-            ],
-            '4ª': [
-                { id: 'pq', title: "Pequeno-Almoço", content: "2 ovos + 1 banana", cals: 245, protein: 14, icon: 'clock' },
-                { id: 'al', title: "Almoço", content: "Salmão 150g + arroz 60g", subtitle: "Legumes: Espinafres", cals: 535, protein: 35, icon: 'activity' },
-                { id: 'la', title: "Lanche", content: "Iogurte proteico", cals: 95, protein: 20, icon: 'zap' },
-                { id: 'ja', title: "Jantar", content: "Sopa + skyr", subtitle: "Dose: 350 ml", cals: 260, protein: 20, icon: 'chef-hat' }
-            ],
-            '5ª': [
-                { id: 'pq', title: "Pequeno-Almoço", content: "2 ovos + 1 banana", cals: 245, protein: 14, icon: 'clock' },
-                { id: 'al', title: "Almoço", content: "Frango 150g + batata 250g", subtitle: "Legumes: Mistura Vegetais", cals: 410, protein: 38, icon: 'activity' },
-                { id: 'la', title: "Lanche", content: "Skyr (170g)", cals: 110, protein: 18, icon: 'zap' },
-                { id: 'ja', title: "Jantar", content: "Sopa + iogurte + whey", subtitle: "Dose: 350 ml", cals: 320, protein: 28, icon: 'chef-hat' }
-            ],
-            '6ª': [
-                { id: 'pq', title: "Pequeno-Almoço", content: "2 ovos + 1 banana", cals: 245, protein: 14, icon: 'clock' },
-                { id: 'al', title: "Almoço", content: "Salmão 150g + grão 100g", subtitle: "Legumes: Couve Bruxelas", cals: 495, protein: 36, icon: 'activity' },
-                { id: 'la', title: "Lanche", content: "Iogurte + Atum", cals: 105, protein: 15, icon: 'zap' },
-                { id: 'ja', title: "Jantar", content: "Sopa + atum ou skyr", subtitle: "Dose: 350 ml", cals: 255, protein: 25, icon: 'chef-hat' }
-            ]
-        };
+      // tenta sincronizar histórico da cloud (mantém o local como fallback)
+      await loadWeeksFromFirestore(25);
 
-        const shoppingData = [
-            { id: 1, cat: 'Proteína', prod: 'Ovos (12 un)', qty: '12 un', price: 3.09, status: 'Comprar', day: '2ª' },
-            { id: 2, cat: 'Proteína', prod: 'Peru (bifes/perna)', qty: '300 g', price: 2.10, status: 'Comprar', day: '2ª' },
-            { id: 3, cat: 'Proteína', prod: 'Frango (peito)', qty: '600 g', price: 1.98, status: 'Comprar', day: '2ª' },
-            { id: 4, cat: 'Proteína', prod: 'Salmão (lombos/postas)', qty: '400 g', price: 4.00, status: 'Comprar', day: '2ª' },
-            { id: 5, cat: 'Proteína', prod: 'Atum ao natural', qty: '3 latas', price: 2.67, status: 'Comprar', day: '2ª' },
-            { id: 6, cat: 'Proteína', prod: 'Skyr natural (150 g)', qty: '3 un', price: 1.95, status: 'Comprar', day: '2ª' },
-            { id: 7, cat: 'Proteína', prod: 'Iogurte proteico', qty: '1 un', price: 0.85, status: 'Comprar', day: '2ª' },
-            { id: 8, cat: 'Proteína', prod: 'Iogurte natural', qty: '2 un', price: 0.35, status: 'Comprar', day: '2ª' },
-            { id: 10, cat: 'Hidratos', prod: 'Arroz', qty: '500 g', price: 0.58, status: 'Comprar', day: '2ª' },
-            { id: 11, cat: 'Hidratos', prod: 'Batata', qty: '1 kg', price: 2.99, status: 'Comprar', day: '2ª' },
-            { id: 12, cat: 'Hidratos', prod: 'Banana', qty: '5 un', price: 1.30, status: 'Comprar', day: '2ª' },
-            { id: 13, cat: 'Hidratos', prod: 'Grão', qty: '400 g', price: 0.90, status: 'Comprar', day: '2ª' },
-            { id: 14, cat: 'Legumes', prod: 'Brócolos', qty: '400 g', price: 2.34, status: 'Comprar', day: '2ª' },
-            { id: 15, cat: 'Legumes', prod: 'Cenoura baby', qty: '750g', price: 1.39, status: 'Comprar', day: '2ª' },
-            { id: 16, cat: 'Legumes', prod: 'Espinafres em folha', qty: '750 g', price: 1.29, status: 'Comprar', day: '4ª' },
-            { id: 17, cat: 'Legumes', prod: 'Mistura Brócolos, etc', qty: '1Kg', price: 1.89, status: 'Comprar', day: '2ª' },
-            { id: 18, cat: 'Legumes', prod: 'Couve de Bruxelas', qty: '750g', price: 1.29, status: 'Comprar', day: '2ª' },
-            { id: 20, cat: 'Sopa Preparada', prod: 'Agrião', qty: '800g', price: 2.49, status: 'Comprar', day: '2ª' },
-            { id: 21, cat: 'Sopa Preparada', prod: 'Creme de Legumes', qty: '800g', price: 2.49, status: 'Comprar', day: '4ª' },
-            { id: 22, cat: 'Sopa Preparada', prod: 'Creme de Cenoura', qty: '800g', price: 2.49, status: 'Comprar', day: '5ª' },
-        ];
+      // render final
+      render();
+    });
 
-        // --- CORE LOGIC ---
-
-        function switchTab(tabId) {
-            activeTab = tabId;
-            render();
-            window.scrollTo({top:0});
-        }
-
-        function updateSelectedDay(day) { selectedDay = day; render(); }
-
-        function toggleMeal(id) {
-            const key = `${selectedDay}-${id}`;
-            completedMeals[key] = !completedMeals[key];
-            render();
-        }
-
-        function toggleShopping(id) {
-            checkedItems[id] = !checkedItems[id];
-            render();
-        }
-
-        function toggleExtraForm() { 
-            const form = document.getElementById('extra-meal-form');
-            if (form) form.classList.toggle('hidden'); 
-        }
-
-        function addExtraMeal() {
-            const name = document.getElementById('ex-name').value;
-            const qty = document.getElementById('ex-qty').value;
-            const cals = parseInt(document.getElementById('ex-cals').value) || 0;
-            const prot = parseInt(document.getElementById('ex-prot').value) || 0;
-            const time = document.getElementById('ex-time').value || '--:--';
-            if (!name) return;
-            extraMeals[selectedDay].push({ id: Date.now(), name, qty, cals, prot, time });
-            ['ex-name', 'ex-qty', 'ex-cals', 'ex-prot', 'ex-time'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.value = '';
-            });
-            toggleExtraForm();
-            render();
-        }
-
-        function removeExtraMeal(id) { extraMeals[selectedDay] = extraMeals[selectedDay].filter(m => m.id !== id); render(); }
-
-        function resetMeals() { if(confirm("Resetar plano?")) { completedMeals = {}; extraMeals = { '2ª': [], '3ª': [], '4ª': [], '5ª': [], '6ª': [] }; render(); } }
-        function resetShopping() { if(confirm("Resetar compras?")) { checkedItems = {}; render(); } }
-        function resetHistory() { if(confirm("Limpar registo?")) { historyEntries = []; render(); } }
-
-        function calculatePlanProgress() {
-            const total = daysList.length * 4;
-            const done = Object.values(completedMeals).filter(Boolean).length;
-            return Math.round((done / total) * 100);
-        }
-
-        function calculateShopProgress() {
-            const toBuy = shoppingData.filter(i => i.status === 'Comprar').length;
-            const bought = shoppingData.filter(i => i.status === 'Comprar' && checkedItems[i.id]).length;
-            return toBuy > 0 ? Math.round((bought / toBuy) * 100) : 0;
-        }
-
-        function archiveWeek() {
-            let totalC = 0, totalP = 0, totalB = 0;
-            daysList.forEach(d => {
-                mealData[d].forEach(m => { if(completedMeals[`${d}-${m.id}`]) { totalC += m.cals; totalP += m.protein; } });
-                extraMeals[d].forEach(m => { totalC += m.cals; totalP += m.prot; });
-                totalB += dailyExercise[d].cals;
-            });
-
-            const planP = calculatePlanProgress();
-            const shopP = calculateShopProgress();
-            
-            historyEntries.unshift({
-                id: Date.now(),
-                date: `Semana de ${new Date().toLocaleDateString('pt-PT')}`,
-                planProgress: planP,
-                shopProgress: shopP,
-                avgCals: Math.round(totalC / 5),
-                avgProt: Math.round(totalP / 5),
-                burned: totalB,
-                status: planP > 90 ? "Excelente" : planP > 70 ? "Bom" : "Razoável"
-            });
-
-            resetMeals();
-            checkedItems = {};
-            switchTab('history');
-        }
-
-        // --- RENDERS ---
-
-        function updateDashboard() {
-            const prog = calculatePlanProgress();
-            const dayMeals = mealData[selectedDay];
-            const extras = extraMeals[selectedDay];
-            const targetCals = dayMeals.reduce((acc, m) => acc + m.cals, 0);
-            const targetProt = dayMeals.reduce((acc, m) => acc + m.protein, 0);
-            const consumedPlanned = dayMeals.reduce((acc, m) => completedMeals[`${selectedDay}-${m.id}`] ? acc + m.cals : acc, 0);
-            const consumedExtra = extras.reduce((acc, m) => acc + m.cals, 0);
-            const protPlanned = dayMeals.reduce((acc, m) => completedMeals[`${selectedDay}-${m.id}`] ? acc + m.protein : acc, 0);
-            const protExtra = extras.reduce((acc, m) => acc + m.prot, 0);
-            const burned = dailyExercise[selectedDay].cals;
-
-            // Elementos do Cabeçalho
-            const headNetCals = document.getElementById('header-net-cals');
-            const headProt = document.getElementById('header-protein');
-            if (headNetCals) headNetCals.innerText = targetCals - burned;
-            if (headProt) headProt.innerText = targetProt;
-
-            // Elementos do Dashboard Diário (Plano)
-            const elProgText = document.getElementById('weekly-progress-text');
-            const elProgBar = document.getElementById('weekly-progress-bar');
-            const elBtnArchive = document.getElementById('btn-archive');
-            const elConsCals = document.getElementById('consumed-cals-text');
-            const elBurnCals = document.getElementById('burned-cals-text');
-            const elProtText = document.getElementById('protein-text');
-
-            if (elProgText) elProgText.innerText = `${prog}%`;
-            if (elProgBar) elProgBar.style.width = `${prog}%`;
-            if (elBtnArchive) elBtnArchive.classList.toggle('hidden', prog < 5);
-            if (elConsCals) elConsCals.innerText = `${consumedPlanned + consumedExtra} kcal`;
-            if (elBurnCals) elBurnCals.innerText = `${burned} kcal`;
-            if (elProtText) elProtText.innerText = `${protPlanned + protExtra}g / ${targetProt}g`;
-        }
-
-        function renderMeals() {
-            // Primeiro atualizamos o dashboard para garantir que IDs existem
-            updateDashboard();
-
-            // Navegação de Dias
-            const dayNav = document.getElementById('day-nav');
-            if (dayNav) {
-                dayNav.innerHTML = daysList.map(d => `
-                    <button onclick="updateSelectedDay('${d}')" class="px-6 py-2 rounded-xl text-xs font-bold transition-all ${selectedDay === d ? 'bg-emerald-600 text-white shadow-md' : 'bg-white text-slate-400 border border-slate-200'}">
-                        ${d}
-                    </button>
-                `).join('');
-            }
-
-            // Entrada de Exercício
-            const exIn = document.getElementById('exercise-input');
-            if (exIn) {
-                exIn.innerHTML = `
-                    <div class="bg-blue-600 p-5 rounded-none sm:rounded-2xl text-white shadow-md flex justify-between items-center">
-                        <div class="flex items-center gap-3">
-                            <i data-lucide="dumbbell" class="w-5 h-5 opacity-60"></i>
-                            <div><div class="text-[10px] font-bold uppercase opacity-80">Gasto Ativo</div><div class="text-sm font-black">${dailyExercise[selectedDay].cals} kcal</div></div>
-                        </div>
-                        <input type="number" oninput="dailyExercise['${selectedDay}'].cals = parseInt(this.value) || 0; updateDashboard();" value="${dailyExercise[selectedDay].cals || ''}" placeholder="kcal" class="bg-white/10 border border-white/20 rounded-xl px-4 py-2 w-24 text-sm text-center outline-none">
-                    </div>
-                `;
-            }
-
-            // Refeições Planeadas
-            const mealCards = document.getElementById('meal-cards');
-            if (mealCards) {
-                mealCards.innerHTML = mealData[selectedDay].map(m => {
-                    const isDone = completedMeals[`${selectedDay}-${m.id}`];
-                    return `
-                        <div onclick="toggleMeal('${m.id}')" class="bg-white p-5 border-b sm:border border-slate-100 flex items-center gap-5 active:bg-slate-50 ${isDone ? 'bg-slate-50/50' : ''}">
-                            <div class="p-4 rounded-2xl ${isDone ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-50 text-slate-300'}"><i data-lucide="${isDone ? 'check-circle-2' : m.icon}" class="w-6 h-6"></i></div>
-                            <div class="flex-1">
-                                <div class="flex justify-between items-start mb-1"><span class="text-[10px] font-bold uppercase text-slate-400">${m.title}</span><span class="text-[10px] font-black text-orange-600">${m.cals} kcal</span></div>
-                                <h4 class="text-base font-bold text-slate-800 ${isDone ? 'line-through text-slate-400 italic' : ''}">${m.content}</h4>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
-
-            // Lista de Refeições Extras
-            const extraList = document.getElementById('extra-meals-list');
-            if (extraList) {
-                extraList.innerHTML = extraMeals[selectedDay].map(m => `
-                    <div class="bg-white p-4 rounded-xl border border-emerald-50 flex justify-between items-center shadow-sm">
-                        <div class="flex items-center gap-3"><span class="text-[10px] font-bold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-md">${m.time}</span>
-                            <div><div class="text-sm font-bold text-slate-800">${m.name}</div><div class="text-[10px] text-slate-400 uppercase font-bold">${m.qty || 'Extra'}</div></div>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <div class="text-right">
-                                <div class="text-xs font-black text-orange-600">${m.cals} kcal</div>
-                                <div class="text-xs font-black text-blue-600">${m.prot}g P</div>
-                            </div>
-                            <button onclick="removeExtraMeal(${m.id})" class="text-slate-300 p-1"><i data-lucide="x" class="w-4 h-4"></i></button>
-                        </div>
-                    </div>
-                `).join('');
-            }
-            lucide.createIcons();
-        }
-
-        function renderShopping() {
-            const container = document.getElementById('shopping-list-content');
-            if (!container) return;
-
-            const cats = [...new Set(shoppingData.map(i => i.cat))];
-            const toBuy = shoppingData.filter(i => i.status === 'Comprar').length;
-            const bought = shoppingData.filter(i => i.status === 'Comprar' && checkedItems[i.id]).length;
-            
-            const summary = document.getElementById('shopping-summary');
-            const badge = document.getElementById('shopping-badge');
-            if (summary) summary.innerText = `${bought} de ${toBuy} produtos adquiridos`;
-            if (badge) {
-                badge.innerText = toBuy - bought;
-                badge.classList.toggle('hidden', toBuy - bought === 0);
-            }
-
-            container.innerHTML = cats.map(cat => `
-                <div class="space-y-4">
-                    <h4 class="text-xs font-black uppercase tracking-widest text-slate-400 border-l-4 border-emerald-500 pl-3">${cat}</h4>
-                    <div class="space-y-px sm:space-y-3">
-                        ${shoppingData.filter(i => i.cat === cat).map(i => {
-                            const isStock = i.status === 'Stock';
-                            const check = checkedItems[i.id];
-                            const isNotMonday = i.day !== '2ª' && i.day !== '—';
-                            const dayTagClass = isNotMonday ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-slate-100 text-slate-500 border-slate-200';
-
-                            return `
-                                <div onclick="${!isStock ? `toggleShopping(${i.id})` : ''}" class="bg-white p-5 border-b sm:border sm:rounded-2xl flex justify-between items-center ${check ? 'opacity-40 grayscale' : isStock ? 'bg-slate-50/30' : 'shadow-sm'}">
-                                    <div class="flex items-center gap-4">
-                                        <i data-lucide="${check ? 'check-square' : isStock ? 'package' : 'square'}" class="w-6 h-6 ${check ? 'text-emerald-500' : 'text-slate-300'}"></i>
-                                        <div class="flex flex-col">
-                                            <div class="flex items-center gap-2">
-                                                <span class="text-base font-bold ${check ? 'line-through' : ''}">${i.prod}</span>
-                                                ${!isStock ? `<span class="text-[8px] font-black px-1.5 py-0.5 rounded border uppercase tracking-tighter ${dayTagClass}">${i.day}</span>` : ''}
-                                            </div>
-                                            <span class="text-xs font-bold text-slate-400 uppercase">${i.qty}</span>
-                                        </div>
-                                    </div>
-                                    <span class="text-base font-black text-slate-900">${i.price.toFixed(2)}€</span>
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                </div>
-            `).join('');
-            lucide.createIcons();
-        }
-
-        function renderHistory() {
-            const container = document.getElementById('history-dashboard-container');
-            if (!container) return;
-
-            if(historyEntries.length === 0) {
-                container.innerHTML = `<div class="p-16 text-center text-slate-300 font-bold text-sm uppercase italic border-2 border-dashed border-slate-100 rounded-3xl">O histórico está vazio</div>`;
-                return;
-            }
-
-            container.innerHTML = historyEntries.map(e => `
-                <div class="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/50 card-report">
-                    <div class="flex justify-between items-start mb-8">
-                        <div>
-                            <h3 class="text-lg font-black text-slate-800">${e.date}</h3>
-                            <span class="inline-block mt-2 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${e.planProgress > 80 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">Performance: ${e.status}</span>
-                        </div>
-                        <div class="bg-slate-50 p-3 rounded-2xl flex flex-col items-center min-w-[80px]">
-                            <div class="text-2xl font-black text-emerald-600 leading-none">${e.planProgress}%</div>
-                            <div class="text-[8px] font-bold text-slate-400 uppercase mt-1">Plano</div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4 mb-8">
-                        <div class="bg-orange-50/50 p-4 rounded-2xl border border-orange-100/50">
-                            <div class="text-[9px] font-black text-orange-400 uppercase tracking-widest mb-1">Média Calórica</div>
-                            <div class="text-xl font-black text-orange-600">${e.avgCals} <span class="text-xs">kcal</span></div>
-                        </div>
-                        <div class="bg-blue-50/50 p-4 rounded-2xl border border-blue-100/50">
-                            <div class="text-[9px] font-black text-blue-400 uppercase tracking-widest mb-1">Média Proteica</div>
-                            <div class="text-xl font-black text-blue-600">${e.avgProt} <span class="text-xs">g</span></div>
-                        </div>
-                    </div>
-
-                    <div class="space-y-6">
-                        <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"><i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i> Compras Efetuadas</span>
-                                <span class="text-xs font-bold text-slate-600">${e.shopProgress}%</span>
-                            </div>
-                            <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                                <div class="bg-emerald-500 h-full rounded-full" style="width: ${e.shopProgress}%"></div>
-                            </div>
-                        </div>
-
-                        <div class="flex justify-between items-center py-4 border-t border-slate-50">
-                            <div class="flex items-center gap-3">
-                                <div class="bg-blue-100 p-2 rounded-xl text-blue-600"><i data-lucide="flame" class="w-4 h-4"></i></div>
-                                <div><div class="text-[9px] font-black text-slate-400 uppercase">Gasto Total Ativo</div><div class="text-sm font-bold text-slate-700">${e.burned} kcal</div></div>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <div class="bg-emerald-100 p-2 rounded-xl text-emerald-600"><i data-lucide="activity" class="w-4 h-4"></i></div>
-                                <div><div class="text-[9px] font-black text-slate-400 uppercase">Eficiência</div><div class="text-sm font-bold text-slate-700">9.4/10</div></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-            lucide.createIcons();
-        }
-
-        function render() {
-            // Esconder todas as vistas e secções
-            document.querySelectorAll('main > div, main > section').forEach(el => el.classList.add('hidden'));
-            
-            // Resetar estados de navegação
-            ['nav-meals', 'nav-shopping', 'nav-history'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.classList.remove('active-tab', 'text-emerald-600');
-            });
-
-            if(activeTab === 'meals') {
-                document.getElementById('daily-dashboard').classList.remove('hidden');
-                document.getElementById('day-nav').classList.remove('hidden');
-                document.getElementById('view-meals').classList.remove('hidden');
-                document.getElementById('nav-meals').classList.add('active-tab', 'text-emerald-600');
-                renderMeals();
-            } else if(activeTab === 'shopping') {
-                document.getElementById('view-shopping').classList.remove('hidden');
-                document.getElementById('nav-shopping').classList.add('active-tab', 'text-emerald-600');
-                renderShopping();
-            } else if(activeTab === 'history') {
-                document.getElementById('view-history').classList.remove('hidden');
-                document.getElementById('nav-history').classList.add('active-tab', 'text-emerald-600');
-                renderHistory();
-            }
-        }
-
-        window.onload = render;
-    </script>
+    // fallback: se auth demorar, não deixes UI em branco
+    window.addEventListener('load', () => {
+      if (!UID) render();
+    });
+  </script>
 </body>
 </html>
