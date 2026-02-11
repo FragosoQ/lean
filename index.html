@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NutriCore - Mobile First</title>
+    <title>NutriCore - Dashboard de Performance</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
         
         :root {
             --safe-area-bottom: env(safe-area-inset-bottom, 0px);
@@ -15,15 +15,9 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f1f5f9;
+            background-color: #f8fafc;
             -webkit-tap-highlight-color: transparent;
             font-size: 16px;
-        }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
         }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -46,16 +40,22 @@
             border-radius: 50%;
         }
 
-        /* Garantir que inputs não façam zoom no mobile */
-        input[type="text"], input[type="number"] {
-            font-size: 16px !important;
+        input { font-size: 16px !important; }
+
+        /* Estilos para Impressão / Exportação PDF */
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; padding: 0; }
+            .print-only { display: block !important; }
+            .card-report { break-inside: avoid; border: 1px solid #e2e8f0 !important; box-shadow: none !important; }
+            header { position: static !important; border-bottom: 2px solid #10b981; }
         }
     </style>
 </head>
 <body class="text-slate-900 pb-32">
 
-    <!-- Header Fixo -->
-    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 px-4 py-4">
+    <!-- Cabeçalho Fixo -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 px-4 py-4 no-print">
         <div class="max-w-md mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <div class="bg-emerald-500 p-2 rounded-xl shadow-sm">
@@ -76,12 +76,12 @@
 
     <main class="max-w-md mx-auto">
         
-        <!-- Dashboard (Ocupa largura total no mobile) -->
-        <section class="p-0 sm:p-4 space-y-px sm:space-y-4">
-            <!-- Progresso -->
+        <!-- Painel de Controlo Diário (Comum ao Plano) -->
+        <section id="daily-dashboard" class="p-0 sm:p-4 space-y-px sm:space-y-4 no-print">
+            <!-- Progresso Semanal -->
             <div class="bg-white p-6 sm:rounded-2xl shadow-sm border-b sm:border border-slate-100">
                 <div class="flex justify-between items-center mb-3">
-                    <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Progresso Semanal</span>
+                    <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Objetivo Semanal</span>
                     <span id="weekly-progress-text" class="text-base font-extrabold text-emerald-600">0%</span>
                 </div>
                 <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
@@ -92,34 +92,31 @@
                 </button>
             </div>
             
-            <!-- Grid de Métricas -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-px sm:gap-4">
                 <div class="bg-white p-5 sm:rounded-2xl border-b sm:border border-slate-100 flex justify-between items-center">
                     <div class="flex items-center gap-3">
                         <div class="bg-orange-100 p-2 rounded-lg text-orange-600"><i data-lucide="plus" class="w-4 h-4"></i></div>
                         <div>
-                            <div class="text-[10px] font-bold uppercase text-slate-400">Dieta</div>
+                            <div class="text-[10px] font-bold uppercase text-slate-400">Consumido Hoje</div>
                             <div id="consumed-cals-text" class="text-lg font-bold">0 kcal</div>
                         </div>
                     </div>
                 </div>
-
                 <div class="bg-white p-5 sm:rounded-2xl border-b sm:border border-slate-100 flex justify-between items-center">
                     <div class="flex items-center gap-3">
                         <div class="bg-blue-100 p-2 rounded-lg text-blue-600"><i data-lucide="minus" class="w-4 h-4"></i></div>
                         <div>
-                            <div class="text-[10px] font-bold uppercase text-slate-400">Queima</div>
+                            <div class="text-[10px] font-bold uppercase text-slate-400">Gasto Ativo</div>
                             <div id="burned-cals-text" class="text-lg font-bold">0 kcal</div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Adicionado: Card de Proteína para evitar o erro JS -->
+                <!-- Card de Proteína (Essencial para o JS funcionar) -->
                 <div class="bg-white p-5 sm:rounded-2xl border-b sm:border border-slate-100 flex justify-between items-center col-span-1 sm:col-span-2">
                     <div class="flex items-center gap-3">
                         <div class="bg-emerald-100 p-2 rounded-lg text-emerald-600"><i data-lucide="dna" class="w-4 h-4"></i></div>
                         <div>
-                            <div class="text-[10px] font-bold uppercase text-slate-400">Proteína Diária</div>
+                            <div class="text-[10px] font-bold uppercase text-slate-400">Proteína Acumulada</div>
                             <div id="protein-text" class="text-lg font-bold">0g</div>
                         </div>
                     </div>
@@ -127,85 +124,123 @@
             </div>
         </section>
 
-        <!-- Selector de Dias (Sticky secundário) -->
-        <div id="day-nav" class="sticky top-[73px] z-40 bg-white/70 backdrop-blur-md border-b border-slate-200 flex gap-2 p-3 overflow-x-auto no-scrollbar">
-            <!-- Gerado via JS -->
+        <!-- Navegador de Dias -->
+        <div id="day-nav" class="sticky top-[73px] z-40 bg-white/70 backdrop-blur-md border-b border-slate-200 flex gap-2 p-3 overflow-x-auto no-scrollbar no-print">
+            <!-- JS -->
         </div>
 
-        <!-- Views -->
-        <div id="view-meals" class="space-y-px sm:space-y-4 sm:p-4">
-            <div id="exercise-input" class="p-4 sm:p-0">
-                <!-- Gerado via JS -->
+        <!-- Vista: PLANO -->
+        <div id="view-meals" class="space-y-px sm:space-y-4 no-print">
+            <div id="exercise-input" class="p-4 sm:p-0"></div>
+            <div id="meal-cards" class="space-y-px sm:space-y-3"></div>
+            
+            <!-- Secção Extras -->
+            <div class="p-4 space-y-4">
+                <div class="flex items-center justify-between px-1">
+                    <h3 class="text-xs font-black uppercase tracking-widest text-slate-400 italic">Extras não previstos</h3>
+                    <button onclick="toggleExtraForm()" class="bg-emerald-500 text-white p-1.5 rounded-lg shadow-sm active:scale-90">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <div id="extra-meal-form" class="hidden bg-white p-5 rounded-2xl border border-emerald-100 shadow-sm space-y-3">
+                    <input id="ex-name" type="text" placeholder="Alimento..." class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm outline-none">
+                    <input id="ex-qty" type="text" placeholder="Qtd (ex: 100g)..." class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm outline-none">
+                    <div class="grid grid-cols-3 gap-2">
+                        <input id="ex-cals" type="number" placeholder="kcal" class="bg-slate-50 border border-slate-100 rounded-xl py-3 text-sm text-center outline-none">
+                        <input id="ex-prot" type="number" placeholder="Prot.g" class="bg-slate-50 border border-slate-100 rounded-xl py-3 text-sm text-center outline-none">
+                        <input id="ex-time" type="text" placeholder="Hora" class="bg-slate-50 border border-slate-100 rounded-xl py-3 text-sm text-center outline-none">
+                    </div>
+                    <button onclick="addExtraMeal()" class="w-full py-3 bg-emerald-600 text-white rounded-xl text-sm font-bold uppercase tracking-widest shadow-lg shadow-emerald-100">Adicionar</button>
+                </div>
+                <div id="extra-meals-list" class="space-y-2"></div>
             </div>
-            <div id="meal-cards" class="space-y-px sm:space-y-3">
-                <!-- Gerado via JS -->
-            </div>
+
             <div class="p-6">
-                <button onclick="resetMeals()" class="w-full py-4 border-2 border-dashed border-slate-200 text-slate-400 rounded-2xl text-xs font-bold uppercase flex items-center justify-center gap-3 active:bg-slate-50">
-                    <i data-lucide="refresh-cw" class="w-4 h-4"></i> Reset ao Plano
+                <button onclick="resetMeals()" class="w-full py-4 border-2 border-dashed border-slate-200 text-slate-400 rounded-2xl text-xs font-bold uppercase flex items-center justify-center gap-3">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i> Reset Plano
                 </button>
             </div>
         </div>
 
-        <div id="view-shopping" class="hidden space-y-px sm:space-y-6 sm:p-4">
-            <div class="bg-emerald-600 p-8 sm:rounded-3xl text-white shadow-lg text-center">
-                <h3 class="font-bold text-2xl flex items-center justify-center gap-3 mb-2"><i data-lucide="shopping-cart" class="w-6 h-6"></i> Lista de Compras</h3>
-                <p id="shopping-summary" class="text-xs opacity-90 uppercase font-black tracking-widest">0 itens no carrinho</p>
+        <!-- Vista: COMPRAS -->
+        <div id="view-shopping" class="hidden space-y-6 no-print">
+            <div class="bg-emerald-600 p-8 text-white text-center">
+                <h3 class="font-bold text-2xl flex items-center justify-center gap-3 mb-2"><i data-lucide="shopping-cart" class="w-6 h-6"></i> Compras</h3>
+                <p id="shopping-summary" class="text-xs opacity-90 uppercase font-black">A carregar...</p>
             </div>
-            <div id="shopping-list" class="space-y-8 p-4 sm:p-0">
-                <!-- Gerado via JS -->
-            </div>
+            <div id="shopping-list-content" class="p-4 space-y-8"></div>
             <div class="p-6">
-                <button onclick="resetShopping()" class="w-full py-4 border-2 border-dashed border-slate-200 text-slate-400 rounded-2xl text-xs font-bold uppercase flex items-center justify-center gap-3 active:bg-slate-50">
-                    <i data-lucide="refresh-cw" class="w-4 h-4"></i> Limpar Compras
+                <button onclick="resetShopping()" class="w-full py-4 border-2 border-dashed border-slate-200 text-slate-400 rounded-2xl text-xs font-bold uppercase flex items-center justify-center gap-3">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i> Limpar Lista
                 </button>
             </div>
         </div>
 
-        <div id="view-history" class="hidden p-4 space-y-4">
-            <h2 class="font-bold text-slate-400 text-[10px] uppercase tracking-[0.2em] px-1 mb-4">Histórico de Atividade</h2>
-            <div id="history-list" class="space-y-3">
+        <!-- Vista: REGISTO / DASHBOARD -->
+        <div id="view-history" class="hidden p-4 space-y-6">
+            <div class="flex justify-between items-center no-print">
+                <h2 class="font-bold text-slate-400 text-[10px] uppercase tracking-[0.2em]">Dashboard Semanal</h2>
+                <button onclick="window.print()" class="text-emerald-600 flex items-center gap-1.5 text-xs font-bold bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-100">
+                    <i data-lucide="file-text" class="w-3.5 h-3.5"></i> Exportar PDF
+                </button>
+            </div>
+
+            <div id="history-dashboard-container" class="space-y-6">
                 <!-- Gerado via JS -->
             </div>
-            <button onclick="resetHistory()" class="w-full py-4 mt-8 bg-red-50 text-red-500 border border-red-100 rounded-2xl text-xs font-bold uppercase flex items-center justify-center gap-3 active:bg-red-100 transition-colors">
-                <i data-lucide="trash-2" class="w-4 h-4"></i> Apagar Tudo
-            </button>
+
+            <div class="no-print">
+                <button onclick="resetHistory()" class="w-full py-4 mt-8 bg-red-50 text-red-500 border border-red-100 rounded-2xl text-xs font-bold uppercase flex items-center justify-center gap-3 active:bg-red-100">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i> Limpar Todos os Registos
+                </button>
+            </div>
         </div>
 
     </main>
 
-    <!-- Barra de Navegação Inferior -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
-        <div class="max-w-md mx-auto flex justify-around items-center pt-4 pb-8 px-4">
+    <!-- Navegação Inferior -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-50 no-print">
+        <div class="max-w-md mx-auto flex justify-around items-center pt-4 pb-8">
             <button onclick="switchTab('meals')" class="flex flex-col items-center gap-1.5 active-tab transition-all" id="nav-meals">
-                <div class="p-1"><i data-lucide="calendar" class="w-6 h-6"></i></div>
-                <span class="text-[10px] font-bold uppercase tracking-widest">Plano</span>
+                <i data-lucide="calendar" class="w-6 h-6"></i>
+                <span class="text-[10px] font-bold uppercase">Plano</span>
             </button>
             <button onclick="switchTab('shopping')" class="flex flex-col items-center gap-1.5 text-slate-400 transition-all" id="nav-shopping">
-                <div class="relative p-1">
+                <div class="relative">
                     <i data-lucide="shopping-cart" class="w-6 h-6"></i>
                     <span id="shopping-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center font-black hidden border-2 border-white">0</span>
                 </div>
-                <span class="text-[10px] font-bold uppercase tracking-widest">Compras</span>
+                <span class="text-[10px] font-bold uppercase">Compras</span>
             </button>
             <button onclick="switchTab('history')" class="flex flex-col items-center gap-1.5 text-slate-400 transition-all" id="nav-history">
-                <div class="p-1"><i data-lucide="history" class="w-6 h-6"></i></div>
-                <span class="text-[10px] font-bold uppercase tracking-widest">Registo</span>
+                <i data-lucide="bar-chart-2" class="w-6 h-6"></i>
+                <span class="text-[10px] font-bold uppercase">Registo</span>
             </button>
         </div>
     </nav>
 
     <script>
-        // --- DATA ---
+        // --- ESTADO ---
         let activeTab = 'meals';
         let selectedDay = '2ª';
         let completedMeals = {};
         let checkedItems = {};
+        let extraMeals = { '2ª': [], '3ª': [], '4ª': [], '5ª': [], '6ª': [] };
         let dailyExercise = { '2ª': { name: '', cals: 0 }, '3ª': { name: '', cals: 0 }, '4ª': { name: '', cals: 0 }, '5ª': { name: '', cals: 0 }, '6ª': { name: '', cals: 0 } };
-        let historyEntries = [];
+        let historyEntries = [
+            { 
+                id: 1, 
+                date: "Semana: 03 Fev - 09 Fev", 
+                planProgress: 85, 
+                shopProgress: 92,
+                avgCals: 1240, 
+                avgProt: 98, 
+                burned: 1200,
+                status: "Excelente"
+            }
+        ];
 
         const daysList = ['2ª', '3ª', '4ª', '5ª', '6ª'];
-        
         const mealData = {
             '2ª': [
                 { id: 'pq', title: "Pequeno-Almoço", content: "2 ovos + 1 banana", cals: 245, protein: 14, icon: 'clock' },
@@ -240,51 +275,37 @@
         };
 
         const shoppingData = [
-            { id: 1, cat: 'Proteína', prod: 'Ovos (12 un)', qty: '12 un', price: 3.09, day: '2ª' },
-            { id: 2, cat: 'Proteína', prod: 'Peru (bifes/perna)', qty: '300 g', price: 2.10, day: '2ª' },
-            { id: 3, cat: 'Proteína', prod: 'Frango (peito)', qty: '600 g', price: 1.98, day: '2ª' },
-            { id: 4, cat: 'Proteína', prod: 'Salmão (lombos)', qty: '400 g', price: 4.00, day: '2ª' },
-            { id: 5, cat: 'Proteína', prod: 'Atum ao natural', qty: '3 latas', price: 2.67, day: '2ª' },
-            { id: 6, cat: 'Proteína', prod: 'Skyr natural', qty: '3 un', price: 1.95, day: '2ª' },
-            { id: 7, cat: 'Proteína', prod: 'Iogurte proteico', qty: '1 un', price: 0.85, day: '2ª' },
-            { id: 8, cat: 'Proteína', prod: 'Iogurte natural', qty: '2 un', price: 0.35, day: '2ª' },
-            { id: 9, cat: 'Hidratos', prod: 'Arroz', qty: '500 g', price: 0.58, day: '2ª' },
-            { id: 11, cat: 'Hidratos', prod: 'Batata', qty: '1 kg', price: 2.99, day: '2ª' },
-            { id: 12, cat: 'Hidratos', prod: 'Banana', qty: '5 un', price: 1.30, day: '2ª' },
-            { id: 13, cat: 'Hidratos', prod: 'Grão', qty: '400 g', price: 0.90, day: '2ª' },
-            { id: 14, cat: 'Legumes', prod: 'Brócolos', qty: '400 g', price: 2.34, day: '2ª' },
-            { id: 15, cat: 'Legumes', prod: 'Cenoura baby', qty: '750g', price: 1.39, day: '2ª' },
-            { id: 17, cat: 'Legumes', prod: 'Espinafres folha', qty: '750 g', price: 1.29, day: '4ª' },
-            { id: 18, cat: 'Legumes', prod: 'Mistura Vegetais', qty: '1 kg', price: 1.89, day: '2ª' },
-            { id: 20, cat: 'Legumes', prod: 'Couve Bruxelas', qty: '750g', price: 1.29, day: '2ª' },
-            { id: 21, cat: 'Sopa', prod: 'Sopa Agrião', qty: '800g', price: 2.49, day: '2ª' },
-            { id: 22, cat: 'Sopa', prod: 'Creme Legumes', qty: '800g', price: 2.49, day: '4ª' },
-            { id: 23, cat: 'Sopa', prod: 'Creme Cenoura', qty: '800g', price: 2.49, day: '5ª' },
+            { id: 1, cat: 'Proteína', prod: 'Ovos (12 un)', qty: '12 un', price: 3.09, status: 'Comprar', day: '2ª' },
+            { id: 2, cat: 'Proteína', prod: 'Peru (bifes/perna)', qty: '300 g', price: 2.10, status: 'Comprar', day: '2ª' },
+            { id: 3, cat: 'Proteína', prod: 'Frango (peito)', qty: '600 g', price: 1.98, status: 'Comprar', day: '2ª' },
+            { id: 4, cat: 'Proteína', prod: 'Salmão (lombos/postas)', qty: '400 g', price: 4.00, status: 'Comprar', day: '2ª' },
+            { id: 5, cat: 'Proteína', prod: 'Atum ao natural', qty: '3 latas', price: 2.67, status: 'Comprar', day: '2ª' },
+            { id: 6, cat: 'Proteína', prod: 'Skyr natural (150 g)', qty: '3 un', price: 1.95, status: 'Comprar', day: '2ª' },
+            { id: 7, cat: 'Proteína', prod: 'Iogurte proteico', qty: '1 un', price: 0.85, status: 'Comprar', day: '2ª' },
+            { id: 8, cat: 'Proteína', prod: 'Iogurte natural', qty: '2 un', price: 0.35, status: 'Comprar', day: '2ª' },
+            { id: 10, cat: 'Hidratos', prod: 'Arroz', qty: '500 g', price: 0.58, status: 'Comprar', day: '2ª' },
+            { id: 11, cat: 'Hidratos', prod: 'Batata', qty: '1 kg', price: 2.99, status: 'Comprar', day: '2ª' },
+            { id: 12, cat: 'Hidratos', prod: 'Banana', qty: '5 un', price: 1.30, status: 'Comprar', day: '2ª' },
+            { id: 13, cat: 'Hidratos', prod: 'Grão', qty: '400 g', price: 0.90, status: 'Comprar', day: '2ª' },
+            { id: 14, cat: 'Legumes', prod: 'Brócolos', qty: '400 g', price: 2.34, status: 'Comprar', day: '2ª' },
+            { id: 15, cat: 'Legumes', prod: 'Cenoura baby', qty: '750g', price: 1.39, status: 'Comprar', day: '2ª' },
+            { id: 16, cat: 'Legumes', prod: 'Espinafres em folha', qty: '750 g', price: 1.29, status: 'Comprar', day: '4ª' },
+            { id: 17, cat: 'Legumes', prod: 'Mistura Brócolos, etc', qty: '1Kg', price: 1.89, status: 'Comprar', day: '2ª' },
+            { id: 18, cat: 'Legumes', prod: 'Couve de Bruxelas', qty: '750g', price: 1.29, status: 'Comprar', day: '2ª' },
+            { id: 20, cat: 'Sopa Preparada', prod: 'Agrião', qty: '800g', price: 2.49, status: 'Comprar', day: '2ª' },
+            { id: 21, cat: 'Sopa Preparada', prod: 'Creme de Legumes', qty: '800g', price: 2.49, status: 'Comprar', day: '4ª' },
+            { id: 22, cat: 'Sopa Preparada', prod: 'Creme de Cenoura', qty: '800g', price: 2.49, status: 'Comprar', day: '5ª' },
         ];
 
         // --- CORE LOGIC ---
 
         function switchTab(tabId) {
             activeTab = tabId;
-            document.querySelectorAll('[id^="view-"]').forEach(v => v.classList.add('hidden'));
-            document.getElementById(`view-${tabId}`).classList.remove('hidden');
-            
-            document.querySelectorAll('nav button').forEach(b => {
-                b.classList.remove('active-tab', 'text-emerald-600');
-                b.classList.add('text-slate-400');
-            });
-            const activeNav = document.getElementById(`nav-${tabId}`);
-            activeNav.classList.add('active-tab', 'text-emerald-600');
-            activeNav.classList.remove('text-slate-400');
-            
             render();
             window.scrollTo({top:0});
         }
 
-        function updateSelectedDay(day) {
-            selectedDay = day;
-            render();
-        }
+        function updateSelectedDay(day) { selectedDay = day; render(); }
 
         function toggleMeal(id) {
             const key = `${selectedDay}-${id}`;
@@ -297,189 +318,276 @@
             render();
         }
 
-        function handleExerciseInput(field, val) {
-            dailyExercise[selectedDay][field] = field === 'cals' ? (parseInt(val) || 0) : val;
-            updateDashboard();
+        function toggleExtraForm() { 
+            const form = document.getElementById('extra-meal-form');
+            if (form) form.classList.toggle('hidden'); 
         }
 
-        function resetMeals() { completedMeals = {}; render(); }
-        function resetShopping() { checkedItems = {}; render(); }
-        function resetHistory() { historyEntries = []; render(); }
+        function addExtraMeal() {
+            const name = document.getElementById('ex-name').value;
+            const qty = document.getElementById('ex-qty').value;
+            const cals = parseInt(document.getElementById('ex-cals').value) || 0;
+            const prot = parseInt(document.getElementById('ex-prot').value) || 0;
+            const time = document.getElementById('ex-time').value || '--:--';
+            if (!name) return;
+            extraMeals[selectedDay].push({ id: Date.now(), name, qty, cals, prot, time });
+            ['ex-name', 'ex-qty', 'ex-cals', 'ex-prot', 'ex-time'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            toggleExtraForm();
+            render();
+        }
 
-        function calculateProgress() {
+        function removeExtraMeal(id) { extraMeals[selectedDay] = extraMeals[selectedDay].filter(m => m.id !== id); render(); }
+
+        function resetMeals() { if(confirm("Resetar plano?")) { completedMeals = {}; extraMeals = { '2ª': [], '3ª': [], '4ª': [], '5ª': [], '6ª': [] }; render(); } }
+        function resetShopping() { if(confirm("Resetar compras?")) { checkedItems = {}; render(); } }
+        function resetHistory() { if(confirm("Limpar registo?")) { historyEntries = []; render(); } }
+
+        function calculatePlanProgress() {
             const total = daysList.length * 4;
             const done = Object.values(completedMeals).filter(Boolean).length;
             return Math.round((done / total) * 100);
+        }
+
+        function calculateShopProgress() {
+            const toBuy = shoppingData.filter(i => i.status === 'Comprar').length;
+            const bought = shoppingData.filter(i => i.status === 'Comprar' && checkedItems[i.id]).length;
+            return toBuy > 0 ? Math.round((bought / toBuy) * 100) : 0;
         }
 
         function archiveWeek() {
             let totalC = 0, totalP = 0, totalB = 0;
             daysList.forEach(d => {
                 mealData[d].forEach(m => { if(completedMeals[`${d}-${m.id}`]) { totalC += m.cals; totalP += m.protein; } });
+                extraMeals[d].forEach(m => { totalC += m.cals; totalP += m.prot; });
                 totalB += dailyExercise[d].cals;
             });
 
+            const planP = calculatePlanProgress();
+            const shopP = calculateShopProgress();
+            
             historyEntries.unshift({
                 id: Date.now(),
-                date: new Date().toLocaleDateString('pt-PT'),
-                progress: calculateProgress(),
+                date: `Semana de ${new Date().toLocaleDateString('pt-PT')}`,
+                planProgress: planP,
+                shopProgress: shopP,
                 avgCals: Math.round(totalC / 5),
                 avgProt: Math.round(totalP / 5),
-                burned: totalB
+                burned: totalB,
+                status: planP > 90 ? "Excelente" : planP > 70 ? "Bom" : "Razoável"
             });
 
-            completedMeals = {};
-            dailyExercise = { '2ª': { name: '', cals: 0 }, '3ª': { name: '', cals: 0 }, '4ª': { name: '', cals: 0 }, '5ª': { name: '', cals: 0 }, '6ª': { name: '', cals: 0 } };
+            resetMeals();
+            checkedItems = {};
             switchTab('history');
         }
 
-        // --- RENDER FUNCTIONS ---
+        // --- RENDERS ---
 
         function updateDashboard() {
-            const prog = calculateProgress();
-            const elProgText = document.getElementById('weekly-progress-text');
-            const elProgBar = document.getElementById('weekly-progress-bar');
-            
-            if (elProgText) elProgText.innerText = `${prog}%`;
-            if (elProgBar) elProgBar.style.width = `${prog}%`;
-            
-            document.getElementById('btn-archive').classList.toggle('hidden', prog === 0);
-
+            const prog = calculatePlanProgress();
             const dayMeals = mealData[selectedDay];
+            const extras = extraMeals[selectedDay];
             const targetCals = dayMeals.reduce((acc, m) => acc + m.cals, 0);
             const targetProt = dayMeals.reduce((acc, m) => acc + m.protein, 0);
+            const consumedPlanned = dayMeals.reduce((acc, m) => completedMeals[`${selectedDay}-${m.id}`] ? acc + m.cals : acc, 0);
+            const consumedExtra = extras.reduce((acc, m) => acc + m.cals, 0);
+            const protPlanned = dayMeals.reduce((acc, m) => completedMeals[`${selectedDay}-${m.id}`] ? acc + m.protein : acc, 0);
+            const protExtra = extras.reduce((acc, m) => acc + m.prot, 0);
             const burned = dailyExercise[selectedDay].cals;
-            const consumed = dayMeals.reduce((acc, m) => completedMeals[`${selectedDay}-${m.id}`] ? acc + m.cals : acc, 0);
-            const consumedP = dayMeals.reduce((acc, m) => completedMeals[`${selectedDay}-${m.id}`] ? acc + m.protein : acc, 0);
 
-            document.getElementById('header-net-cals').innerText = targetCals - burned;
-            document.getElementById('header-protein').innerText = targetProt;
-            document.getElementById('consumed-cals-text').innerText = `${consumed} kcal`;
-            document.getElementById('burned-cals-text').innerText = `${burned} kcal`;
-            
-            // Verificação de segurança para o elemento de proteína (causa do erro anterior)
-            const proteinEl = document.getElementById('protein-text');
-            if (proteinEl) {
-                proteinEl.innerText = `${consumedP}g / ${targetProt}g`;
-            }
-        }
+            // Elementos do Cabeçalho
+            const headNetCals = document.getElementById('header-net-cals');
+            const headProt = document.getElementById('header-protein');
+            if (headNetCals) headNetCals.innerText = targetCals - burned;
+            if (headProt) headProt.innerText = targetProt;
 
-        function renderDayNav() {
-            const container = document.getElementById('day-nav');
-            container.innerHTML = daysList.map(d => `
-                <button onclick="updateSelectedDay('${d}')" class="px-6 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${selectedDay === d ? 'bg-emerald-600 text-white shadow-md' : 'bg-white text-slate-400 border border-slate-200'}">
-                    ${d}
-                </button>
-            `).join('');
+            // Elementos do Dashboard Diário (Plano)
+            const elProgText = document.getElementById('weekly-progress-text');
+            const elProgBar = document.getElementById('weekly-progress-bar');
+            const elBtnArchive = document.getElementById('btn-archive');
+            const elConsCals = document.getElementById('consumed-cals-text');
+            const elBurnCals = document.getElementById('burned-cals-text');
+            const elProtText = document.getElementById('protein-text');
+
+            if (elProgText) elProgText.innerText = `${prog}%`;
+            if (elProgBar) elProgBar.style.width = `${prog}%`;
+            if (elBtnArchive) elBtnArchive.classList.toggle('hidden', prog < 5);
+            if (elConsCals) elConsCals.innerText = `${consumedPlanned + consumedExtra} kcal`;
+            if (elBurnCals) elBurnCals.innerText = `${burned} kcal`;
+            if (elProtText) elProtText.innerText = `${protPlanned + protExtra}g / ${targetProt}g`;
         }
 
         function renderMeals() {
+            // Primeiro atualizamos o dashboard para garantir que IDs existem
             updateDashboard();
-            renderDayNav();
-            
-            const exerciseContainer = document.getElementById('exercise-input');
-            exerciseContainer.innerHTML = `
-                <div class="bg-blue-600 p-5 rounded-none sm:rounded-2xl text-white shadow-md relative overflow-hidden">
-                    <i data-lucide="dumbbell" class="absolute right-[-10px] bottom-[-10px] w-24 h-24 opacity-10"></i>
-                    <div class="relative z-10 space-y-4">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold uppercase tracking-widest opacity-80">Gasto Ativo (${selectedDay})</span>
-                            <span class="text-sm font-black bg-white/20 px-2 py-1 rounded">${dailyExercise[selectedDay].cals} kcal</span>
-                        </div>
-                        <div class="flex gap-2">
-                            <input type="text" placeholder="Nome do Treino..." oninput="handleExerciseInput('name', this.value)" value="${dailyExercise[selectedDay].name}" class="bg-white/10 border border-white/20 rounded-xl px-4 py-3 w-full text-sm placeholder:text-blue-200 outline-none focus:bg-white/20">
-                            <input type="number" placeholder="kcal" oninput="handleExerciseInput('cals', this.value)" value="${dailyExercise[selectedDay].cals || ''}" class="bg-white/10 border border-white/20 rounded-xl px-4 py-3 w-24 text-sm text-center outline-none focus:bg-white/20">
-                        </div>
-                    </div>
-                </div>
-            `;
 
-            const container = document.getElementById('meal-cards');
-            container.innerHTML = mealData[selectedDay].map(m => {
-                const isDone = completedMeals[`${selectedDay}-${m.id}`];
-                return `
-                    <div onclick="toggleMeal('${m.id}')" class="bg-white p-5 rounded-none sm:rounded-2xl border-b sm:border border-slate-100 flex items-center gap-5 active:bg-slate-50 transition-all ${isDone ? 'bg-slate-50/50' : ''}">
-                        <div class="p-4 rounded-2xl ${isDone ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-50 text-slate-300 shadow-inner'}">
-                            <i data-lucide="${isDone ? 'check-circle-2' : m.icon}" class="w-6 h-6"></i>
+            // Navegação de Dias
+            const dayNav = document.getElementById('day-nav');
+            if (dayNav) {
+                dayNav.innerHTML = daysList.map(d => `
+                    <button onclick="updateSelectedDay('${d}')" class="px-6 py-2 rounded-xl text-xs font-bold transition-all ${selectedDay === d ? 'bg-emerald-600 text-white shadow-md' : 'bg-white text-slate-400 border border-slate-200'}">
+                        ${d}
+                    </button>
+                `).join('');
+            }
+
+            // Entrada de Exercício
+            const exIn = document.getElementById('exercise-input');
+            if (exIn) {
+                exIn.innerHTML = `
+                    <div class="bg-blue-600 p-5 rounded-none sm:rounded-2xl text-white shadow-md flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="dumbbell" class="w-5 h-5 opacity-60"></i>
+                            <div><div class="text-[10px] font-bold uppercase opacity-80">Gasto Ativo</div><div class="text-sm font-black">${dailyExercise[selectedDay].cals} kcal</div></div>
                         </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="flex justify-between items-start mb-1">
-                                <span class="text-[10px] font-bold uppercase text-slate-400 tracking-widest">${m.title}</span>
-                                <div class="flex gap-2">
-                                    <span class="text-[10px] font-black text-orange-600 bg-orange-50 px-2 py-0.5 rounded-lg border border-orange-100">${m.cals} kcal</span>
-                                    <span class="text-[10px] font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">${m.protein}g P</span>
-                                </div>
-                            </div>
-                            <h4 class="text-base font-bold text-slate-800 ${isDone ? 'line-through text-slate-400 italic' : ''}">${m.content}</h4>
-                            ${m.subtitle ? `<p class="text-xs text-emerald-600/80 font-bold mt-2 flex items-center gap-1.5"><i data-lucide="info" class="w-3.5 h-3.5"></i> ${m.subtitle}</p>` : ''}
-                        </div>
+                        <input type="number" oninput="dailyExercise['${selectedDay}'].cals = parseInt(this.value) || 0; updateDashboard();" value="${dailyExercise[selectedDay].cals || ''}" placeholder="kcal" class="bg-white/10 border border-white/20 rounded-xl px-4 py-2 w-24 text-sm text-center outline-none">
                     </div>
                 `;
-            }).join('');
+            }
+
+            // Refeições Planeadas
+            const mealCards = document.getElementById('meal-cards');
+            if (mealCards) {
+                mealCards.innerHTML = mealData[selectedDay].map(m => {
+                    const isDone = completedMeals[`${selectedDay}-${m.id}`];
+                    return `
+                        <div onclick="toggleMeal('${m.id}')" class="bg-white p-5 border-b sm:border border-slate-100 flex items-center gap-5 active:bg-slate-50 ${isDone ? 'bg-slate-50/50' : ''}">
+                            <div class="p-4 rounded-2xl ${isDone ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-50 text-slate-300'}"><i data-lucide="${isDone ? 'check-circle-2' : m.icon}" class="w-6 h-6"></i></div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start mb-1"><span class="text-[10px] font-bold uppercase text-slate-400">${m.title}</span><span class="text-[10px] font-black text-orange-600">${m.cals} kcal</span></div>
+                                <h4 class="text-base font-bold text-slate-800 ${isDone ? 'line-through text-slate-400 italic' : ''}">${m.content}</h4>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Lista de Refeições Extras
+            const extraList = document.getElementById('extra-meals-list');
+            if (extraList) {
+                extraList.innerHTML = extraMeals[selectedDay].map(m => `
+                    <div class="bg-white p-4 rounded-xl border border-emerald-50 flex justify-between items-center shadow-sm">
+                        <div class="flex items-center gap-3"><span class="text-[10px] font-bold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-md">${m.time}</span>
+                            <div><div class="text-sm font-bold text-slate-800">${m.name}</div><div class="text-[10px] text-slate-400 uppercase font-bold">${m.qty || 'Extra'}</div></div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="text-right">
+                                <div class="text-xs font-black text-orange-600">${m.cals} kcal</div>
+                                <div class="text-xs font-black text-blue-600">${m.prot}g P</div>
+                            </div>
+                            <button onclick="removeExtraMeal(${m.id})" class="text-slate-300 p-1"><i data-lucide="x" class="w-4 h-4"></i></button>
+                        </div>
+                    </div>
+                `).join('');
+            }
             lucide.createIcons();
         }
 
         function renderShopping() {
-            const container = document.getElementById('shopping-list');
-            const cats = ['Proteína', 'Hidratos', 'Legumes', 'Sopa'];
-            
-            const total = shoppingData.length;
-            const checked = shoppingData.filter(i => checkedItems[i.id]).length;
-            document.getElementById('shopping-summary').innerText = `${checked} de ${total} produtos comprados`;
-            
-            const badge = document.getElementById('shopping-badge');
-            badge.innerText = total - checked;
-            badge.classList.toggle('hidden', total - checked === 0);
+            const container = document.getElementById('shopping-list-content');
+            if (!container) return;
 
-            container.innerHTML = cats.map(cat => {
-                const items = shoppingData.filter(i => i.cat === cat);
-                return `
-                    <div class="space-y-4">
-                        <h4 class="text-xs font-black uppercase tracking-[0.2em] text-slate-400 px-1 border-l-4 border-emerald-500 pl-3 ml-1">${cat}</h4>
-                        <div class="space-y-px sm:space-y-3">
-                            ${items.map(i => {
-                                const isChecked = checkedItems[i.id];
-                                const isLate = i.day !== '2ª';
-                                return `
-                                    <div onclick="toggleShopping(${i.id})" class="bg-white p-5 rounded-none sm:rounded-2xl border-b sm:border flex justify-between items-center active:bg-slate-50 transition-all ${isChecked ? 'bg-slate-50/50 grayscale' : 'border-slate-100 shadow-sm'}">
-                                        <div class="flex items-center gap-4">
-                                            <div class="transition-all ${isChecked ? 'text-emerald-500 scale-110' : 'text-slate-300'}">
-                                                <i data-lucide="${isChecked ? 'check-square' : 'square'}" class="w-6 h-6"></i>
+            const cats = [...new Set(shoppingData.map(i => i.cat))];
+            const toBuy = shoppingData.filter(i => i.status === 'Comprar').length;
+            const bought = shoppingData.filter(i => i.status === 'Comprar' && checkedItems[i.id]).length;
+            
+            const summary = document.getElementById('shopping-summary');
+            const badge = document.getElementById('shopping-badge');
+            if (summary) summary.innerText = `${bought} de ${toBuy} produtos adquiridos`;
+            if (badge) {
+                badge.innerText = toBuy - bought;
+                badge.classList.toggle('hidden', toBuy - bought === 0);
+            }
+
+            container.innerHTML = cats.map(cat => `
+                <div class="space-y-4">
+                    <h4 class="text-xs font-black uppercase tracking-widest text-slate-400 border-l-4 border-emerald-500 pl-3">${cat}</h4>
+                    <div class="space-y-px sm:space-y-3">
+                        ${shoppingData.filter(i => i.cat === cat).map(i => {
+                            const isStock = i.status === 'Stock';
+                            const check = checkedItems[i.id];
+                            const isNotMonday = i.day !== '2ª' && i.day !== '—';
+                            const dayTagClass = isNotMonday ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-slate-100 text-slate-500 border-slate-200';
+
+                            return `
+                                <div onclick="${!isStock ? `toggleShopping(${i.id})` : ''}" class="bg-white p-5 border-b sm:border sm:rounded-2xl flex justify-between items-center ${check ? 'opacity-40 grayscale' : isStock ? 'bg-slate-50/30' : 'shadow-sm'}">
+                                    <div class="flex items-center gap-4">
+                                        <i data-lucide="${check ? 'check-square' : isStock ? 'package' : 'square'}" class="w-6 h-6 ${check ? 'text-emerald-500' : 'text-slate-300'}"></i>
+                                        <div class="flex flex-col">
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-base font-bold ${check ? 'line-through' : ''}">${i.prod}</span>
+                                                ${!isStock ? `<span class="text-[8px] font-black px-1.5 py-0.5 rounded border uppercase tracking-tighter ${dayTagClass}">${i.day}</span>` : ''}
                                             </div>
-                                            <div class="flex flex-col">
-                                                <span class="text-base font-bold ${isChecked ? 'line-through text-slate-400' : 'text-slate-800'}">${i.prod}</span>
-                                                <span class="text-xs font-bold text-slate-400 uppercase tracking-tight">${i.qty} • <span class="${isLate ? 'text-amber-500' : ''}">${i.day}</span></span>
-                                            </div>
+                                            <span class="text-xs font-bold text-slate-400 uppercase">${i.qty}</span>
                                         </div>
-                                        <span class="text-base font-black text-slate-900">${i.price.toFixed(2)}€</span>
                                     </div>
-                                `;
-                            }).join('')}
-                        </div>
+                                    <span class="text-base font-black text-slate-900">${i.price.toFixed(2)}€</span>
+                                </div>
+                            `;
+                        }).join('')}
                     </div>
-                `;
-            }).join('');
+                </div>
+            `).join('');
             lucide.createIcons();
         }
 
         function renderHistory() {
-            const container = document.getElementById('history-list');
+            const container = document.getElementById('history-dashboard-container');
+            if (!container) return;
+
             if(historyEntries.length === 0) {
-                container.innerHTML = `<div class="p-16 text-center text-slate-300 font-bold text-sm uppercase italic tracking-widest bg-white rounded-2xl border-2 border-dashed border-slate-100">Sem registos arquivados</div>`;
+                container.innerHTML = `<div class="p-16 text-center text-slate-300 font-bold text-sm uppercase italic border-2 border-dashed border-slate-100 rounded-3xl">O histórico está vazio</div>`;
                 return;
             }
+
             container.innerHTML = historyEntries.map(e => `
-                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex justify-between items-center">
-                    <div class="min-w-0 flex-1">
-                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 italic">Semana de ${e.date}</h4>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="text-[10px] font-black bg-orange-50 text-orange-600 px-2 py-1 rounded-lg border border-orange-100">~${e.avgCals} kcal/dia</span>
-                            <span class="text-[10px] font-black bg-blue-100 text-blue-700 px-2 py-1 rounded-lg border border-blue-200">${e.burned} kcal🔥</span>
+                <div class="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/50 card-report">
+                    <div class="flex justify-between items-start mb-8">
+                        <div>
+                            <h3 class="text-lg font-black text-slate-800">${e.date}</h3>
+                            <span class="inline-block mt-2 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${e.planProgress > 80 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">Performance: ${e.status}</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-2xl flex flex-col items-center min-w-[80px]">
+                            <div class="text-2xl font-black text-emerald-600 leading-none">${e.planProgress}%</div>
+                            <div class="text-[8px] font-bold text-slate-400 uppercase mt-1">Plano</div>
                         </div>
                     </div>
-                    <div class="text-right ml-4">
-                        <div class="text-2xl font-black text-emerald-600">${e.progress}%</div>
-                        <div class="text-[9px] font-bold text-slate-300 uppercase tracking-tighter">Conclusão</div>
+
+                    <div class="grid grid-cols-2 gap-4 mb-8">
+                        <div class="bg-orange-50/50 p-4 rounded-2xl border border-orange-100/50">
+                            <div class="text-[9px] font-black text-orange-400 uppercase tracking-widest mb-1">Média Calórica</div>
+                            <div class="text-xl font-black text-orange-600">${e.avgCals} <span class="text-xs">kcal</span></div>
+                        </div>
+                        <div class="bg-blue-50/50 p-4 rounded-2xl border border-blue-100/50">
+                            <div class="text-[9px] font-black text-blue-400 uppercase tracking-widest mb-1">Média Proteica</div>
+                            <div class="text-xl font-black text-blue-600">${e.avgProt} <span class="text-xs">g</span></div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"><i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i> Compras Efetuadas</span>
+                                <span class="text-xs font-bold text-slate-600">${e.shopProgress}%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                                <div class="bg-emerald-500 h-full rounded-full" style="width: ${e.shopProgress}%"></div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center py-4 border-t border-slate-50">
+                            <div class="flex items-center gap-3">
+                                <div class="bg-blue-100 p-2 rounded-xl text-blue-600"><i data-lucide="flame" class="w-4 h-4"></i></div>
+                                <div><div class="text-[9px] font-black text-slate-400 uppercase">Gasto Total Ativo</div><div class="text-sm font-bold text-slate-700">${e.burned} kcal</div></div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="bg-emerald-100 p-2 rounded-xl text-emerald-600"><i data-lucide="activity" class="w-4 h-4"></i></div>
+                                <div><div class="text-[9px] font-black text-slate-400 uppercase">Eficiência</div><div class="text-sm font-bold text-slate-700">9.4/10</div></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `).join('');
@@ -487,15 +595,33 @@
         }
 
         function render() {
-            if(activeTab === 'meals') renderMeals();
-            else if(activeTab === 'shopping') renderShopping();
-            else if(activeTab === 'history') renderHistory();
+            // Esconder todas as vistas e secções
+            document.querySelectorAll('main > div, main > section').forEach(el => el.classList.add('hidden'));
+            
+            // Resetar estados de navegação
+            ['nav-meals', 'nav-shopping', 'nav-history'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.remove('active-tab', 'text-emerald-600');
+            });
+
+            if(activeTab === 'meals') {
+                document.getElementById('daily-dashboard').classList.remove('hidden');
+                document.getElementById('day-nav').classList.remove('hidden');
+                document.getElementById('view-meals').classList.remove('hidden');
+                document.getElementById('nav-meals').classList.add('active-tab', 'text-emerald-600');
+                renderMeals();
+            } else if(activeTab === 'shopping') {
+                document.getElementById('view-shopping').classList.remove('hidden');
+                document.getElementById('nav-shopping').classList.add('active-tab', 'text-emerald-600');
+                renderShopping();
+            } else if(activeTab === 'history') {
+                document.getElementById('view-history').classList.remove('hidden');
+                document.getElementById('nav-history').classList.add('active-tab', 'text-emerald-600');
+                renderHistory();
+            }
         }
 
-        window.onload = () => {
-            render();
-            lucide.createIcons();
-        };
+        window.onload = render;
     </script>
 </body>
 </html>
